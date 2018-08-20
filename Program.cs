@@ -13,10 +13,75 @@ namespace codility
     {   
         static void Main(string[] args)
         {     
-            TestAsserts();
-            TestPermsOfR();
-            TestNChooseR();
-            MissingItems();
+            ArrayItemSwaps();
+            //TestAsserts();
+            //TestPermsOfR();
+            //TestNChooseR();
+            //MissingItems();
+        }
+
+        static void ArrayItemSwaps()
+        {
+            var stopWatch = new Stopwatch();
+            var A = LinearSequence(19); 
+            var B = LinearSequence(19);
+            B[B.Length-1]=0;
+            stopWatch.Start();
+            "Low Sum:".Dump();
+            var minPath =  BuildTree(A,B);
+            minPath.Dump<int>();
+            minPath.Sum().Dump();
+            stopWatch.Stop();
+            Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
+        }
+
+        class Tree<T> {
+            public int Level { get; set; }
+            public T Value { get; set; }
+            public Tree<T> Left { get; set; }
+            public Tree<T> Right { get; set; }
+            public Tree(int level, T value) {
+                this.Level = level;
+                this.Value = value;
+            }
+        }
+
+        static int[] BuildTree(int[] A, int[] B) 
+        {
+            var stack = new Stack<Tree<int>>((int)Math.Pow(2,A.Length));
+            int level = 0;
+            Tree<int> t = new Tree<int>(-1,-1);
+            stack.Push(t);
+            int[] path = new int[A.Length];
+            long minSum=long.MaxValue;
+            int[] minPath = new int[A.Length];
+            while (stack.Count>0)
+            {
+                var top = stack.Pop();
+                if (top.Level > -1)
+                {
+                    path[top.Level]=top.Value;
+                }
+                level = top.Level + 1;
+                if (level<A.Length)
+                {
+                    top.Left = new Tree<int>(level,A[level]);
+                    top.Right = new Tree<int>(level,B[level]);
+                    stack.Push(top.Left);
+                    stack.Push(top.Right);
+                }
+                else
+                {
+                    long currSum = path.Sum();
+                    if (currSum < minSum)
+                    {
+                        minSum = currSum;
+                        for (int i=0;i<path.Length;i++)
+                            minPath[i]=path[i];
+                    }
+                }
+            }
+            return minPath;
         }
 
         static void TestAsserts() {
@@ -53,68 +118,6 @@ namespace codility
             AssertAreEqual(1,nCr(6,6));
             AssertAreEqual(1,nCr(0,0));
             AssertAreEqual(6.93,Round(nCr(1600,60)/1e109,2));
-            stopWatch.Stop();
-            Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
-        }
-
-        static int[] LowestSum(int[] A, int[] B) 
-        {
-            long sumA = A.Sum();
-            long sumB = B.Sum();
-            long minSum = long.MaxValue;
-            var combo = new int[]{};
-
-            if (sumA < sumB) {
-                minSum = sumA;
-                combo = A;
-            }
-            else {
-                minSum = sumB;
-                combo = B;
-            }
-
-            for (int i=0;i<A.Length;i++)
-            {
-                for (int s=0;s<2;s++)
-                {
-                    int k=0;
-                    var c = new int[A.Length];
-                    for (int j=0;j<B.Length;j++)
-                    {
-                        if (s==0){
-                            if (i==j)
-                                c[k]=A[j];
-                            else
-                                c[k]=B[j];
-                        }
-                        else {
-                            if (i==j)
-                                c[k]=B[j];
-                            else
-                                c[k]=A[j];
-
-                        }
-                        k++;
-                    }
-                    var sumC = c.Sum();
-                    if (sumC < minSum)
-                    {
-                        minSum = sumC;
-                        combo = c;
-                    }
-                    c.Dump();
-                }
-            }
-            return combo;
-        }
-
-        static void ArrayItemSwaps()
-        {
-            var stopWatch = new Stopwatch();
-            var A = new int[] {5,2,3}; 
-            var B = new int[] {4,3,1};
-            stopWatch.Start();
-            LowestSum(A,B).Dump();
             stopWatch.Stop();
             Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
         }
