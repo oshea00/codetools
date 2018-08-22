@@ -5,6 +5,107 @@ using static System.Math;
 
 public static class Functions {
     static Random r = new Random(System.Environment.TickCount);
+
+    public static long[] PrefixSums(int[] A)
+    {   
+        var n = A.Length + 1;
+        var sums = new long[n];
+        for (int i=1;i<n;i++) {
+            sums[i]=sums[i-1]+A[i-1];
+        }
+        return sums;
+    }
+
+    // update counters 1-N using an input command list:
+    // containing counter # to increment. If N+1, treat
+    // as "set all to current max count" command.
+    public static int[] UpdateCounters(int N, int[] A) {
+        var counters = new int[N];
+        var bonus = new int[N];
+        int maxCmd = N+1;
+        int lastMax=0;
+        int maxCount=0;
+        for (int i=0;i<A.Length;i++)
+        {
+            if (A[i] == maxCmd)
+            {
+                if (maxCount > lastMax)
+                {
+                    for (int j=0;j<bonus.Length;j++)
+                    {
+                        bonus[j] = (maxCount - counters[j]);
+                    }
+                    lastMax = maxCount;
+                }
+            }
+            else
+            {
+                if (bonus[A[i]-1]>0)
+                {
+                    counters[A[i]-1] += (1 + bonus[A[i]-1]);
+                    bonus[A[i]-1] = 0;
+                }
+                else
+                {
+                    counters[A[i]-1] += 1;
+                }
+                maxCount = Max(maxCount,counters[A[i]-1]);
+            }
+        }
+        for (int j=0;j<bonus.Length;j++)
+            counters[j] += bonus[j];
+        return counters;
+    }
+
+    public static int WhenAllFound1ThruX(int[] A, int x) {
+        var all = new HashSet<int>();
+        if (A.Length<x)
+            return -1;
+        for (int i=0;i<A.Length;i++)
+        {
+            all.Add(A[i]);
+            if (all.Count==x)
+                return i;
+        }
+        return -1;
+    }
+
+    public static bool CanMakeSumsEqual(int[] A, int[] B, int m) {
+        var suma = A.Sum();
+        var sumb = B.Sum();
+        var d = sumb - suma;
+        if (d==0)
+            return true;
+        if (Abs(d % 2) == 1)
+            return false;
+        d /= 2; // net amount we have to evenly add/subtract 
+        var countsA = CountItems(A,m);
+        for (int i=0; i<A.Length; i++) {
+            var v = B[i]-d;  // Element in b which gives d/2 diff
+            if (v >=0 && v <= m && countsA[v] > 0) // is it in A?
+                return true;
+        }
+        return false;
+    }
+
+    public static int[] CountItems(int[] A, int m) {
+        var cnts = new int[m+1];
+        foreach (int val in A) {
+            cnts[val] += 1;
+        }
+        return cnts;
+    }
+    
+    public static int[] MinSum(int[] A, int[] B) {
+        // O(n)
+        int[] s = new int[A.Length];
+        for (int i=0;i<A.Length;i++)
+        {
+            s[i] = Min(A[i],B[i]);
+        }
+        return s;
+    }
+
     // Returns first missing sequence element in given array
     // assuming duplicates.
     // if all elements are present (or none) return the next one.
@@ -23,6 +124,36 @@ public static class Functions {
         }
         j += step;
         return j; // return next element 
+    }
+
+    // Returns first missing sequence element in given array
+    // assuming duplicates.
+    // if all elements are present (or none) return the next one.
+    public static int FindPositiveMissingSequenceItem(int[] A,int step=1)
+    {
+        int smallest = 1;
+        var counts = new int[1000001];
+        int min = int.MaxValue;
+        int max = 1;
+        for (int i=0;i<A.Length;i++)
+        {
+            if (A[i]>0)
+            {
+                counts[A[i]]+=1;
+                min = Min(min,A[i]);
+                max = Max(max,A[i]);
+            }
+        }
+        if (min>1 || max < 0)
+            return smallest;
+        for (int i=1;i<counts.Length;i++)
+        {
+            if (counts[i] == 0)
+            {
+                return i;
+            }
+        }
+        return max+1;
     }
 
     public static void Exit() {
