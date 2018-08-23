@@ -144,7 +144,7 @@ public static class Functions {
                 max = Max(max,A[i]);
             }
         }
-        if (min>1 || max < 0)
+        if (min > 1 || max < 0)
             return smallest;
         for (int i=1;i<counts.Length;i++)
         {

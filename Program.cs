@@ -13,7 +13,10 @@ namespace codility
     {   
         static void Main(string[] args)
         {   
-            RunMushroomChamp();
+
+            //TestFindMinImpact();
+            //TestCountTransitions();
+            //RunMushroomChamp();
             //TestMinHeap();
             //TestPrefixSums();
             //TestUpdateCounters();            
@@ -27,10 +30,97 @@ namespace codility
             //MissingItems();
         }
 
+        static void TestFindMinImpact() {
+            string code = "CAGCCTA";
+            var P = new int[] {2,5,0};
+            var Q = new int[] {4,5,6}; 
+            var a = minImpact(code,P,Q);
+            a.Dump<int>();
+            AssertAreEqual(new List<int>{2,4,1},a);
+        }
+
+        // 100% - Use prefix counts on binary marker array to
+        // determin presence of events - in this case min value in string segments.
+        static int[] minImpact(string code,int[] P, int[] Q) {
+            var min = int.MaxValue;
+            var max = 0;
+            var impact = new Dictionary<char,int>() {
+                {'A',1},
+                {'C',2},
+                {'G',3},
+                {'T',4},
+            };
+
+            var codes = new int[code.Length];
+            var codemins = new int[code.Length];
+
+            for (int i=0;i<code.Length; i++) {
+                var c = impact[code[i]];
+                min = Min(min,c);
+                max = Max(max,c);
+                codes[i] = c;
+            }
+
+            for (int i=0;i<codemins.Length;i++) {
+                codemins[i] = (codes[i] == min) ? 1 : 0;
+            }
+
+            var minsums = PrefixSums(codemins);
+
+            var answers = new int[P.Length];
+            for (int i=0;i<P.Length;i++) {
+                if (min-max == 0) {
+                    answers[i]=min; // If the whole string is same digit min/max are always equal.
+                }
+                else
+                if (Q[i]-P[i]+1==codes.Length) {
+                    answers[i]=min; // If querying the whole string - the min is the answer
+                }
+                else {
+                    // We check for a min code in the P[i] Q[i] range
+                    if (minsums[Q[i]+1]-minsums[P[i]] > 0)
+                    {
+                        answers[i]=min;
+                    }
+                    else {
+                        // We have no min in the range - we'll need to check it.
+                        var mincode=int.MaxValue;
+                        for (int j=P[i];j<=Q[i];j++)
+                        {
+                            mincode = Min(mincode,codes[j]);
+                        }
+                        answers[i]=mincode;
+                    }
+                }
+            }
+            return answers;
+        }
+
+        static void TestCountTransitions() {
+            var passing = CountTransitions(new int[]{0,1,0,1,1});
+            AssertAreEqual(5,passing);
+            $"Transitions = {passing} OK".Dump();
+        }
+
+        static long CountTransitions(int[] A) {
+            var counts = PrefixSums(A);
+            long total = 0;
+            var n = A.Length;
+            for (int i=0;i<n;i++) {
+                if (A[i]==0) {
+                    total += (counts[n]-counts[i]);
+                    if (total > 1000000000)
+                        return -1;
+                }
+            }
+            return total;
+        }
+
         static void RunMushroomChamp() {
             var A = new int[] {2, 3, 7, 5, 1, 3, 9};
             MushroomChamp(A,6,4);
         }
+
         static void MushroomChamp(int[] A, int maxmoves, int startPos) {
             var sums = PrefixSums(A);
             var maxX = 0;
@@ -63,25 +153,6 @@ namespace codility
                 //$"sum={sum}".Dump();
             }
             $"Best picking range[{maxX}..{maxY}] yields {maxSum}".Dump();
-        }
-
-        static void ShowSlices(int mk, int n, int m) {
-            int k = (mk < n/2+1) ? mk : n - 1 - mk;
-            $"mk={mk}".Dump();
-            $"k={k}".Dump();
-            for (int i=0; i < m && k - i >= 0; i++) {
-                if (i==0) {
-                    if (mk<n/2+1)
-                        $"leftmost={k} rightmost={Min(k + (m-1),n-1)}".Dump();
-                    else
-                        $"leftmost={Max(n-1-k - (m-1),0)} rightmost={n-1-k} ".Dump();
-                } else {
-                    if (mk<n/2+1)
-                        $"leftmost={k - i} rightmost={Min(k + m-2*i ,n-1)}".Dump();
-                    else
-                        $"leftmost={Max(n-1-k - (m-2*i),0)} rightmost={n-1-k + i}".Dump();
-                }
-            }
         }
 
         private static void TestMinHeap()
