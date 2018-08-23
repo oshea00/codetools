@@ -13,7 +13,8 @@ namespace codility
     {   
         static void Main(string[] args)
         {   
-            TestMinHeap();
+            RunMushroomChamp();
+            //TestMinHeap();
             //TestPrefixSums();
             //TestUpdateCounters();            
             //TestWhen1ThruXFound();
@@ -24,6 +25,63 @@ namespace codility
             //TestPermsOfR();
             //TestNChooseR();
             //MissingItems();
+        }
+
+        static void RunMushroomChamp() {
+            var A = new int[] {2, 3, 7, 5, 1, 3, 9};
+            MushroomChamp(A,6,4);
+        }
+        static void MushroomChamp(int[] A, int maxmoves, int startPos) {
+            var sums = PrefixSums(A);
+            var maxX = 0;
+            var maxY = 0;
+            long maxSum = 0;
+            A.Dump<int>();
+            $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
+            var n = A.Length;
+            int k = (startPos < n/2+1) ? startPos : n - 1 - startPos;
+            for (int i=0; i < maxmoves && k - i >= 0; i++) {
+                int x=0, y=0;
+                if (i==0) {
+                    if (startPos < n/2+1) 
+                    {    x = k;     y = Min(k + (maxmoves-1),n-1); }
+                    else
+                    {    x = Max(n-1-k - (maxmoves-1),0);   y = n-1-k; }
+                } else {
+                    if (startPos < n/2+1)
+                    {    x = k - i; y = Min(k + maxmoves-2*i ,n-1); }
+                    else
+                    {    x = Max(n-1-k - (maxmoves-2*i),0); y = n-1-k + i; }
+                }
+                var sum = sums[y+1] - sums[x];
+                if (sum > maxSum) {
+                    maxX = x;
+                    maxY = y;
+                    maxSum = sum;
+                }
+                //$"leftmost={x} rightmost={y}".Dump();
+                //$"sum={sum}".Dump();
+            }
+            $"Best picking range[{maxX}..{maxY}] yields {maxSum}".Dump();
+        }
+
+        static void ShowSlices(int mk, int n, int m) {
+            int k = (mk < n/2+1) ? mk : n - 1 - mk;
+            $"mk={mk}".Dump();
+            $"k={k}".Dump();
+            for (int i=0; i < m && k - i >= 0; i++) {
+                if (i==0) {
+                    if (mk<n/2+1)
+                        $"leftmost={k} rightmost={Min(k + (m-1),n-1)}".Dump();
+                    else
+                        $"leftmost={Max(n-1-k - (m-1),0)} rightmost={n-1-k} ".Dump();
+                } else {
+                    if (mk<n/2+1)
+                        $"leftmost={k - i} rightmost={Min(k + m-2*i ,n-1)}".Dump();
+                    else
+                        $"leftmost={Max(n-1-k - (m-2*i),0)} rightmost={n-1-k + i}".Dump();
+                }
+            }
         }
 
         private static void TestMinHeap()
