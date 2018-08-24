@@ -12,8 +12,8 @@ namespace codility
     class Program
     {   
         static void Main(string[] args)
-        {   
-
+        {
+            TestHowManyDivisible();   
             //TestFindMinImpact();
             //TestCountTransitions();
             //RunMushroomChamp();
@@ -28,6 +28,49 @@ namespace codility
             //TestPermsOfR();
             //TestNChooseR();
             //MissingItems();
+        }
+
+        private static void TestHowManyDivisible()
+        {
+            AssertAreEqual(3,HowManyDivisible(6,11,2));
+            AssertAreEqual(8,HowManyDivisible(0,14,2));
+            AssertAreEqual(1,HowManyDivisible(10,10,5));
+            AssertAreEqual(2,HowManyDivisible(11,14,2));
+            AssertAreEqual(20,HowManyDivisible(11,345,17));
+            AssertAreEqual(12345,HowManyDivisible(101, 123456789, 10000));
+        }
+
+        static int HowManyDivisible(int a, int b, int k)
+        {
+            // proved for a=b=0
+            if (a == b && a == 0)
+                return 1;
+
+            // proved a=0, b>0 and a%k == 0
+            if (a == 0 && b > 0 && a%k==0)
+                return 1 + (b-a)/k;
+
+            // proved a=b, a>0, a%k != 0
+            if (a == b && a > 0 && a%k != 0)
+                return (b-a)/k;
+
+            // proved k>0, a>0, a<b, a%k == 0
+            if (a % k == 0) {
+                return 1 + (b-a)/k;
+            }   
+            else {
+                // Make a%k==0 then above works a%k==0 a>0 a<b
+                if (a+a%k>b)
+                    return 0;
+                else
+                {
+                    if (k<a)
+                        a = a + a%k;
+                    else
+                        a = k;
+                    return 1 + (b-a)/k;
+                }
+            }         
         }
 
         static void TestFindMinImpact() {
