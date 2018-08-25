@@ -6,6 +6,34 @@ using static System.Math;
 public static class Functions {
     static Random r = new Random(System.Environment.TickCount);
 
+    // Given 2 Arrays representing a list of binary choices (A or B),
+    // call given function with each possible choice combination until
+    // f returns false or we are done generating all the options.
+    // Definitely brute force O(2^N) - but correct and at least allows
+    // for an early stop if some condition is met before all options
+    // are explored.
+    public static void TraverseChoices<T>(T[] A, T[] B, Func<T[], bool> f) {
+        var N = A.Length;
+        var C = new T[2][] {A,B};
+        var P = (long) Pow(2,N);
+        var c = new T[N];
+        for (long i=0;i<P;i++) {
+            var n = i;
+            var idx = 0;
+            while (n>0) {
+                var choice = n%2;
+                c[idx] = C[choice][idx];
+                n /= 2;
+                idx++;
+            }
+            while (idx<N) {
+                c[idx] = C[0][idx++];
+            }
+            if (f(c) == false)
+                break;
+        }
+    } 
+
     public static long[] PrefixSums(int[] A)
     {   
         var n = A.Length + 1;
@@ -14,6 +42,38 @@ public static class Functions {
             sums[i]=sums[i-1]+A[i-1];
         }
         return sums;
+    }
+
+    public static double[] Differentials(double[] A)
+    {
+        var n = A.Length+1;
+        var difs = new double[n];
+        for (int i=1;i<n-1;i++) {
+            difs[i]=A[i]-A[i-1];
+        }
+        return difs;
+    }
+
+    public static double[] PrefixAvgs(int[] A)
+    {   
+        var n = A.Length + 1;
+        var sums = new double[n];
+        for (int i=1;i<n;i++) {
+            sums[i]=((sums[i-1]*(i-1))+A[i-1])/i;
+        }
+        return sums;
+    }
+
+    public static Tuple<int,int,long[]> PrefixSumsAndStats(int[] A) {
+        var n = A.Length + 1;
+        int min=int.MaxValue, max=0;
+        var sums = new long[n];
+        for (int i=1;i<n;i++) {
+            sums[i]=sums[i-1]+A[i-1];
+            min = Min(min,A[i-1]);
+            max = Max(max,A[i-1]);
+        }
+        return new Tuple<int,int,long[]>(min,max,sums);
     }
 
     // update counters 1-N using an input command list:

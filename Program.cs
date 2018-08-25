@@ -13,7 +13,9 @@ namespace codility
     {   
         static void Main(string[] args)
         {
-            TestHowManyDivisible();   
+            TestTraverseChoices();
+            //TestMinAvg();
+            //TestHowManyDivisible();   
             //TestFindMinImpact();
             //TestCountTransitions();
             //RunMushroomChamp();
@@ -30,6 +32,108 @@ namespace codility
             //MissingItems();
         }
 
+        private static void TestTraverseChoices()
+        {
+            var A = new int[] {1,2};
+            var B = new int[] {5,6};
+            int i=0;
+
+            TraverseChoices(A,B,(C)=>{
+                C.Dump<int>();
+                i++;
+                return true;
+            });
+            AssertAreEqual(Pow(2,A.Length),i);
+
+            i=0;
+            TraverseChoices(A,B,(C)=>{
+                C.Dump<int>();
+                i++;
+                return false;
+            });
+            AssertAreEqual(1,i);
+        }
+
+        private static void TestMinAvg()
+        {
+            AssertAreEqual(1,MinAvgTable(new int[] {4,2,2,5,1,5,8}));
+            AssertAreEqual(5,MinAvgTable(new int[] {-4,-2,-2,-5,-1,-5,-3}));
+            AssertAreEqual(0,MinAvgTable(new int[] {-4,2,-2,5,-1,5,-3}));
+            AssertAreEqual(5,MinAvgTable(new int[] {1,2,3,4,5,-8,-9}));
+            AssertAreEqual(1,MinAvgTable(new int[] {8,-2,3,-4,5,8,-9}));
+            AssertAreEqual(2,MinAvgTable(new int[] {-3, -5, -8, -4, -10}));
+        }
+
+        static void AvgTable(int[] A)
+        {
+            var sums = PrefixSums(A);
+            //sums.Dump<long>();
+            int N = A.Length;
+            double minAvg = double.MaxValue;
+            int minPos = N-1;
+            int lastRowPos=minPos;
+            DumpSlice(A,0,N-1,0);
+            for (int s=2; s<=N; s++)
+            {
+                Console.Write($"{s}  ");
+                for (int i=0; i<Min(lastRowPos,N-(s-1)); i++) {
+//                for (int i=0; i<N-(s-1); i++) {
+                    var x=i;
+                    var y=i+s-1;
+                    var avg = ((double) sums[y+1]-sums[x])/s;  
+                    //Console.Write($"{avg.ToString("0.0")} ");
+                    if (avg<minAvg)
+                    {
+                        minAvg = avg;
+                        minPos = i;
+                        Console.Write($" {minAvg.ToString("0.0")}");
+                    }
+                }
+                lastRowPos = N-minPos+1;
+                Console.WriteLine($" {lastRowPos}");
+            }
+        }
+
+        static int MinAvgTable(int[] A)
+        {
+            AvgTable(A);
+            double minAvg = double.MaxValue;
+            var sums = PrefixSums(A);
+            int N = A.Length;
+            int minPos = N-1;
+            int lastRowPos=minPos;
+            for (int s=2; s<=N; s++)
+            {
+                //for (int i=0; i<Min(minPos+1, N-(s-1)); i++) {
+                for (int i=0; i<Min(lastRowPos,N-(s-1)); i++) {
+                    var x=i;
+                    var y=i+s-1;
+                    var avg = ((double) sums[y+1]-sums[x])/s;
+                    if (avg<minAvg)
+                    {
+                        minAvg = avg;
+                        minPos = i;
+                    }
+                }
+                lastRowPos = Min(minPos,N-minPos-1);
+            }
+            minPos.Dump();
+            return minPos;
+        }
+
+        static void DumpSlice(int[] A,int i,int j,double avg)
+        {
+            var sb = new StringBuilder();
+            sb.Append("  [");
+            while (i<=j) {
+                sb.Append(A[i]+"   ");
+                i++;
+            }
+            sb.Remove(sb.Length-1,1);
+            sb.Append("]");
+            //sb.Append($" {avg.ToString("0.00")}");
+            sb.ToString().Dump();
+        }
         private static void TestHowManyDivisible()
         {
             AssertAreEqual(3,HowManyDivisible(6,11,2));
