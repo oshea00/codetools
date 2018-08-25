@@ -6,6 +6,13 @@ using static System.Math;
 public static class Functions {
     static Random r = new Random(System.Environment.TickCount);
 
+    public static void CopyTo<T>(this T[] a,T [] b) {
+        for (int i=0;i<a.Length;i++)
+        {
+            b[i] = a[i];
+        }
+    }
+
     // Given 2 Arrays representing a list of binary choices (A or B),
     // call given function with each possible choice combination until
     // f returns false or we are done generating all the options.
@@ -166,49 +173,52 @@ public static class Functions {
         return s;
     }
 
-    // Returns first missing sequence element in given array
-    // assuming duplicates.
-    // if all elements are present (or none) return the next one.
-    public static int FindMissingSequenceItem(int[] A,int step=1)
+    // Find the only missing sequence number in given array
+    // assume no dupes and only one missing item.
+    // assume first item in sequence s/b step.
+    // If all items present return next item
+    public static int FindSinglePositiveMissingSequenceItem(int[] A, int step=1)
     {
-        // O(N + log N) worst case missing element @ N-1
-        // Average O(N/2 + log N)
-        // Overall O(N) 
-        var set = new SortedSet<int>(A);
-        int j=0;
-        foreach (var i in set)
+        // Use triangle number math to find the missing value
+        long n = A.Length+1;
+        long sum_sb = n*step*(n+1) / 2;
+        long sum = A.Sum();
+        int missing = (int)(sum_sb-sum);
+        if (missing == 0)
         {
-            j += step;
-            if (i > j)
-                return j;
+            return (int)(n * step) + step;
         }
-        j += step;
-        return j; // return next element 
+        else
+        {
+            return missing;
+        }
     }
 
     // Returns first missing sequence element in given array
     // assuming duplicates.
     // if all elements are present (or none) return the next one.
-    public static int FindPositiveMissingSequenceItem(int[] A,int step=1)
+    public static int FindPositiveMissingSequenceItem(int[] A)
     {
         int smallest = 1;
-        var counts = new int[1000001];
+        var counts = new HashSet<int>();
         int min = int.MaxValue;
         int max = 1;
         for (int i=0;i<A.Length;i++)
         {
             if (A[i]>0)
             {
-                counts[A[i]]+=1;
+                counts.Add(A[i]);
                 min = Min(min,A[i]);
                 max = Max(max,A[i]);
             }
         }
-        if (min > 1 || max < 0)
+
+        if (min > 1)
             return smallest;
-        for (int i=1;i<counts.Length;i++)
+
+        for (int i=1;i<max;i++)
         {
-            if (counts[i] == 0)
+            if (!counts.Contains(i))
             {
                 return i;
             }
@@ -297,55 +307,6 @@ public static class Functions {
             f *= i;
         }
         return f;
-    }
-
-    // Assuming duplicates present - return all missing items
-    public static int[] FindAllMissingSequenceItem(int[] A,int step=1)
-    {
-        // O(N + log N) worst case missing element @ N-1
-        // Average O(N/2 + log N)
-        // Overall O(N) 
-        var missing = new List<int>(A.Length);
-        var set = new SortedSet<int>(A);
-        int j=0;
-        foreach (var i in set)
-        {
-            j += step;
-            while (i > j)
-            {
-                missing.Add(j);
-                j += step;
-            }
-        }
-        if (missing.Count==0)
-        {
-            if (A.Length==0)
-                missing.Add(step);
-            else
-                missing.Add(A[A.Length-1]+step);
-        }
-        return missing.ToArray();  
-    }
-
-    // Find the only missing sequence number in given array
-    // assume no dupes and only one missing item.
-    // assume first item in sequence s/b step.
-    // If all items present return next item
-    public static int FindMissingSequenceItemNoDupes(int[] A, int step=1)
-    {
-        // Use triangle number math to find the missing value
-        long n = A.Length+1;
-        long sum_sb = n*step*(n+1) / 2;
-        long sum = A.Sum();
-        int missing = (int)(sum_sb-sum);
-        if (missing == 0)
-        {
-            return (int)(n * step) + step;
-        }
-        else
-        {
-            return missing;
-        }
     }
 
     public static long Sum(this int[] a)

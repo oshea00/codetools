@@ -13,7 +13,8 @@ namespace codility
     {   
         static void Main(string[] args)
         {
-            TestTraverseChoices();
+            //TestChooseMinMissing();
+            //TestTraverseChoices();
             //TestMinAvg();
             //TestHowManyDivisible();   
             //TestFindMinImpact();
@@ -32,6 +33,32 @@ namespace codility
             //MissingItems();
         }
 
+        private static void TestChooseMinMissing()
+        {
+            var A = new int[] {1,6,2,3};
+            var B = new int[] {1,2,-9,5};
+
+            var minMissing = int.MaxValue;
+            int[] minSequence = new int[A.Length];
+
+            TraverseChoices(A,B,(C)=>{
+                var missing = FindPositiveMissingSequenceItem(C);
+                if (missing < minMissing) {
+                    minMissing = missing;
+                    C.CopyTo(minSequence);
+                }
+                minMissing = Min(minMissing,missing);
+                if (missing  == 1 )
+                    return false;
+                else
+                    return true;
+            });
+
+            minSequence.Dump<int>();
+            minMissing.Dump();
+
+        }
+
         private static void TestTraverseChoices()
         {
             var A = new int[] {1,2};
@@ -47,7 +74,6 @@ namespace codility
 
             i=0;
             TraverseChoices(A,B,(C)=>{
-                C.Dump<int>();
                 i++;
                 return false;
             });
@@ -437,31 +463,16 @@ namespace codility
         static void MissingItems() {
                 var s = new SortedSet<int>(); // forcing dll load to make output nicer later.
                 "Test functions...".Dump();
+                var A = new int[] {1,2,-9,5};
+                A.Dump<int>();
                 var stopWatch = new Stopwatch();
-                var A = LinearSequence(1000000);
-                A.Shuffle();
-                if (A.Length<55)
-                    A.Dump();
                 stopWatch.Start();
                 var answer = FindPositiveMissingSequenceItem(A);
                 stopWatch.Stop();
                 Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
                 "Missing Item:".Dump();
                 Console.WriteLine(answer);
-                /* 
-                Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
-                stopWatch.Reset();
-                stopWatch.Start();
-                FindMissingSequenceItemNoDupes(A).Dump();
-                stopWatch.Stop();
-                Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
-                stopWatch.Reset();
-                A = new int[] {5,10};
-                stopWatch.Start();
-                FindAllMissingSequenceItem(A).Dump();
-                stopWatch.Stop();
-                Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
-                */
+                AssertAreEqual(2,FindSinglePositiveMissingSequenceItem(new int[]{1,3}));
         }
     }
 }
