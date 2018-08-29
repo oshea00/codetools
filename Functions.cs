@@ -6,12 +6,94 @@ using static System.Math;
 public static class Functions {
     static Random r = new Random(System.Environment.TickCount);
 
+    public static long Gcd(long a, long b) {
+        if (a%b == 0)
+            return b;
+        else
+            return Gcd(b,a%b);
+    }
+
+    public static bool IsPrime(long p) {
+        if (p==2 || p==3)
+            return true;
+        if (p<2 || p%2==0 || p%3==0)
+            return false;
+        var i = 5;
+        var w = 2;
+        while (i*i <= p) {
+            if (p % i == 0)
+                return false;
+            i += w;
+            w = 6 - w;
+        }
+        return true;
+    }
+
+    public static IEnumerable<long> GetPrimes() {
+        yield return 2;
+        yield return 3;
+        long n=3;
+        while (true) {
+            n += 2;
+            if (IsPrime(n))
+                yield return n;
+        }
+    }
+
+    public static void Permutations<T>(T[] A, Action<T[]> f) {
+        Permutations(A,0,A.Length - 1,f);
+    }
+
+    public static void Permutations<T>(T[] A, int k, int m, Action<T[]> f) {
+
+        if (k == m) {
+            f(A);
+        }
+        else {
+            for (int i=k; i<=m; i++) {
+                Swap(ref A[k],ref A[i]);
+                Permutations(A,k+1,m,f);
+                Swap(ref A[k],ref A[i]);
+            }
+        }
+    }
+
+    public static T[] Insert<T>(this T[] me, T item, int pos) {
+        int n = me.Length;
+        Array.Resize(ref me,n+1);
+        for (int i=n; i>pos; i--) {
+            me[i]=me[i-1];
+        }
+        me[pos]=item;
+        return me;
+    }
+
     public static void CopyTo<T>(this T[] a,T [] b) {
         for (int i=0;i<a.Length;i++)
         {
             b[i] = a[i];
         }
     }
+
+    public static int MaxProduct3(int[] A) {
+        //A.Shuffle();
+        Array.Sort(A);
+        var N = A.Length;
+
+        // only 3 or all nonpos xxx nnn
+        if (N==3 || A[N-1] <=0)
+            return A[N-3]*A[N-2]*A[N-1];
+
+        // ppp or nnp ?
+        if ((A[0] < 0 && A[1] < 0) && (A[0]*A[1]*A[N-1] > A[N-1]*A[N-2]*A[N-3])) {
+                // nnp
+                return A[0]*A[1]*A[N-1];
+        }
+
+        // ppp
+        return A[N-3]*A[N-2]*A[N-1];
+    }
+
 
     // Given 2 Arrays representing a list of binary choices (A or B),
     // call given function with each possible choice combination until

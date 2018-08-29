@@ -11,8 +11,14 @@ namespace codility
 {
     class Program
     {   
+
+
         static void Main(string[] args)
         {
+            TestGcd();
+            //TestGetPrimes();
+            //TestPermutations();
+            //TestMaxProduct3();
             //TestChooseMinMissing();
             //TestTraverseChoices();
             //TestMinAvg();
@@ -33,6 +39,40 @@ namespace codility
             //MissingItems();
         }
 
+        private static void TestGcd()
+        {
+            AssertAreEqual(1,Gcd(5,7));
+            AssertAreEqual(1,Gcd(7,5));
+            AssertAreEqual(7,Gcd(35,14));
+            AssertAreEqual(14,Gcd(0,14));
+            AssertAreEqual(1,Gcd(15,14));
+        }
+
+        private static void TestGetPrimes()
+        {
+            var primes = GetPrimes().GetEnumerator();
+
+            for (int i=0;i<10;i++) {
+                primes.MoveNext();
+                primes.Current.Dump();
+            }
+            //PrintPrimes(500);
+        }
+
+        private static void TestPermutations()
+        {
+            Permutations("CATS".ToArray(),p=>{
+                p.Dump<char>();
+            });
+        }
+
+        private static void TestMaxProduct3()
+        {
+            AssertAreEqual(125,MaxProduct3(new int[] {-5, 5, -5, 4}));
+            AssertAreEqual(60,MaxProduct3(new int[] {-3, 1, 2, -2, 5, 6}));
+            AssertAreEqual(105,MaxProduct3(new int[] {-5, -3, 1, 2, 3, 4, 7}));
+        }
+
         private static void TestChooseMinMissing()
         {
             var A = new int[] {1,6,2,3};
@@ -47,7 +87,6 @@ namespace codility
                     minMissing = missing;
                     C.CopyTo(minSequence);
                 }
-                minMissing = Min(minMissing,missing);
                 if (missing  == 1 )
                     return false;
                 else
@@ -56,7 +95,6 @@ namespace codility
 
             minSequence.Dump<int>();
             minMissing.Dump();
-
         }
 
         private static void TestTraverseChoices()
@@ -93,30 +131,27 @@ namespace codility
         static void AvgTable(int[] A)
         {
             var sums = PrefixSums(A);
-            //sums.Dump<long>();
+            sums.Dump<long>();
             int N = A.Length;
             double minAvg = double.MaxValue;
             int minPos = N-1;
-            int lastRowPos=minPos;
             DumpSlice(A,0,N-1,0);
-            for (int s=2; s<=N; s++)
+            for (int s=2; s<=3; s++)
             {
                 Console.Write($"{s}  ");
-                for (int i=0; i<Min(lastRowPos,N-(s-1)); i++) {
-//                for (int i=0; i<N-(s-1); i++) {
+                for (int i=0; i<N-(s-1); i++) {
                     var x=i;
                     var y=i+s-1;
                     var avg = ((double) sums[y+1]-sums[x])/s;  
-                    //Console.Write($"{avg.ToString("0.0")} ");
+                    Console.Write($"{avg.ToString("0.0")} ");
                     if (avg<minAvg)
                     {
                         minAvg = avg;
                         minPos = i;
-                        Console.Write($" {minAvg.ToString("0.0")}");
                     }
                 }
-                lastRowPos = N-minPos+1;
-                Console.WriteLine($" {lastRowPos}");
+                Console.Write($" [{minAvg.ToString("0.0")}]");
+                Console.WriteLine($"");
             }
         }
 
@@ -127,11 +162,10 @@ namespace codility
             var sums = PrefixSums(A);
             int N = A.Length;
             int minPos = N-1;
-            int lastRowPos=minPos;
-            for (int s=2; s<=N; s++)
+            for (int s=2; s<=3; s++) //Guessing that min is always slice 2 or 3
+//            for (int s=2; s<=3; s++)
             {
-                //for (int i=0; i<Min(minPos+1, N-(s-1)); i++) {
-                for (int i=0; i<Min(lastRowPos,N-(s-1)); i++) {
+                for (int i=0; i<N-(s-1); i++) {
                     var x=i;
                     var y=i+s-1;
                     var avg = ((double) sums[y+1]-sums[x])/s;
@@ -141,7 +175,6 @@ namespace codility
                         minPos = i;
                     }
                 }
-                lastRowPos = Min(minPos,N-minPos-1);
             }
             minPos.Dump();
             return minPos;
@@ -473,6 +506,67 @@ namespace codility
                 "Missing Item:".Dump();
                 Console.WriteLine(answer);
                 AssertAreEqual(2,FindSinglePositiveMissingSequenceItem(new int[]{1,3}));
+        }
+
+                // Interesting to try one of Knuth's examples as-is, gotos, all caps vars, etc...
+        public static void PrintPrimes(int numPrimes) {
+            p1:
+            var PRIME = new int[numPrimes+1];
+            PRIME[1] = 2;
+            var N = 3;  // next odd number candidate
+            var J = 1;  // # primes found 
+            p2: // N Is Prime
+            J += 1;
+            PRIME[J] = N;
+            p3:
+            if (J==numPrimes)
+                goto p9;
+            p4: // Advance
+            N += 2;
+            p5:
+            var K = 2;
+            p6:
+            var Q = N / PRIME[K];
+            var R = N % PRIME[K];
+            if (R==0)
+                goto p4;
+            p7:
+            if (Q <= PRIME[K])
+                goto p2;
+            p8:
+            K += 1;
+            goto p6;
+            p9:
+            $"FIRST {numPrimes} PRIMES".Dump();
+            for (int j=0;j<(numPrimes/10);j++) {
+                for (int i=1;i<numPrimes;i+=(numPrimes/10)) {
+                    Console.Write($"{PRIME[i+j].ToString("0000")} ");
+                }
+                "".Dump();
+            }
+        }
+
+        // Another Knuth example to play with...
+        public static Tuple<int,int> FindMax(int[] A) {
+            m1:
+            var n = A.Length-1;
+            var j = n; // max position
+            var k = n - 1;
+            var m = A[n]; // current max
+            m2:
+            if (k==0) {
+                return new Tuple<int,int>(m,j);
+            }
+            m3:
+            if (A[k]<=m) {
+                goto m5;
+            }
+            m4:
+            j = k;
+            m = A[k];
+            m5:
+            k-=1;
+            goto m2;
         }
     }
 }
