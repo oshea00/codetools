@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using static System.Math;
 
+public class Job {
+    public string Name { get; set; }
+    public bool Done { get; set; }
+    public bool Running { get; set; }
+    public List<string> Dependencies { get; set; }
+}
+
 public static class Functions {
     static Random r = new Random(System.Environment.TickCount);
 
@@ -351,7 +358,7 @@ public static class Functions {
 
     // n "choose" r - or binomial numbers
     public static double nCr(int N, int r) {
-        if (r == N)
+        if (r == N || r == 0)
             return 1;
         //  0 <= r < N
         double numerator = 1.0;

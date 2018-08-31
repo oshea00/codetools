@@ -11,11 +11,11 @@ namespace codility
 {
     class Program
     {   
-
-
         static void Main(string[] args)
         {
-            TestGcd();
+            TestDeque();
+            //RunTopologicalSort();
+            //TestGcd();
             //TestGetPrimes();
             //TestPermutations();
             //TestMaxProduct3();
@@ -37,6 +37,73 @@ namespace codility
             //TestPermsOfR();
             //TestNChooseR();
             //MissingItems();
+        }
+
+        private static void TestDeque()
+        {
+            var d = new Deque<int>();
+            d.Enqueue(4);
+            d.Enqueue(5);
+            AssertAreEqual(4,d.Dequeue());
+            AssertAreEqual(false,d.IsEmpty);
+            AssertAreEqual(1,d.Count);
+            d.Enqueue(4);
+            AssertAreEqual(4,d.Pop());
+            d.Push(4);
+            AssertAreEqual(4,d.Dequeue());
+            AssertAreEqual(5,d.Dequeue());
+            AssertAreEqual(0,d.Count);
+            d.Push(5);
+            AssertAreEqual(5,d.Pop());
+            AssertAreEqual(0,d.Count);
+        }
+
+        private static void RunTopologicalSort()
+        {
+            var d = new Dictionary<string,Job>();
+            var deps = new string[] {
+                "9<2","3<7","7<5","5<8","8<6",
+                "4<6","1<3","7<4","9<5","2<8",
+            };
+
+            // Load job dependencies
+            foreach (var dep in deps) {
+                var toks = dep.Split('<');
+                var anode = new Job { Name = toks[1], Dependencies = new List<string>() };
+                var bnode = new Job { Name = toks[0], Dependencies = new List<string>() };
+                if (!d.ContainsKey(anode.Name)) {
+                    d.Add(anode.Name,anode);
+                }
+                if (!d.ContainsKey(bnode.Name)) {
+                    d.Add(bnode.Name,bnode);
+                }
+                d[anode.Name].Dependencies.Add(bnode.Name);
+            }
+
+            // Run jobs
+            var isRunnable = new Func<string,bool>(job=>
+                 d[job].Done == false &&
+                (d[job].Dependencies.Count == 0 || d[job].Dependencies.All(j=>d[j].Done))
+            );
+
+            var jobRuns = new List<string>();
+            while (true) {
+                var runnable = d.Keys.Where(job=>isRunnable(job)).FirstOrDefault();
+                if (runnable == null)
+                    break;
+                // run job
+                d[runnable].Done = true;
+                jobRuns.Add(runnable);
+            }
+
+            // Jobs are run as soon as all their dependencies (if any)
+            // are satisfied.
+            $"Jobs run in order:".Dump();
+            jobRuns.Dump<string>();
+            $"Jobs not run due to cyclic dependency:".Dump();
+            foreach (var job in d.Keys.Where(job=>d[job].Done==false)) {
+                d[job].Name.Dump();
+            }
         }
 
         private static void TestGcd()
@@ -508,9 +575,9 @@ namespace codility
                 AssertAreEqual(2,FindSinglePositiveMissingSequenceItem(new int[]{1,3}));
         }
 
-                // Interesting to try one of Knuth's examples as-is, gotos, all caps vars, etc...
+        // Interesting to try one of Knuth's examples as-is, gotos, all caps vars, etc...
         public static void PrintPrimes(int numPrimes) {
-            p1:
+            //p1:
             var PRIME = new int[numPrimes+1];
             PRIME[1] = 2;
             var N = 3;  // next odd number candidate
@@ -518,22 +585,22 @@ namespace codility
             p2: // N Is Prime
             J += 1;
             PRIME[J] = N;
-            p3:
+            //p3:
             if (J==numPrimes)
                 goto p9;
             p4: // Advance
             N += 2;
-            p5:
+            //p5:
             var K = 2;
             p6:
             var Q = N / PRIME[K];
             var R = N % PRIME[K];
             if (R==0)
                 goto p4;
-            p7:
+            //p7:
             if (Q <= PRIME[K])
                 goto p2;
-            p8:
+            //p8:
             K += 1;
             goto p6;
             p9:
@@ -548,7 +615,7 @@ namespace codility
 
         // Another Knuth example to play with...
         public static Tuple<int,int> FindMax(int[] A) {
-            m1:
+            //m1:
             var n = A.Length-1;
             var j = n; // max position
             var k = n - 1;
@@ -557,11 +624,11 @@ namespace codility
             if (k==0) {
                 return new Tuple<int,int>(m,j);
             }
-            m3:
+            //m3:
             if (A[k]<=m) {
                 goto m5;
             }
-            m4:
+            //m4:
             j = k;
             m = A[k];
             m5:
