@@ -457,6 +457,48 @@ public static class Functions {
         Console.WriteLine(sb.ToString());
     }
 
+}
 
+class PolyTerm {
+    public int Coef { get; set; }
+    public int Exp { get; set; }
+    public PolyTerm Link { get; set; }
+
+    public PolyTerm()
+    {
+        Exp = -1;
+        Link = this;
+    }
+
+    public PolyTerm(int coef, int exp, PolyTerm link = null) {
+        Coef = coef;
+        Exp = exp;
+        Link = link;
+    }
+
+    public bool IsTail => Exp == -1;
+
+    public override string ToString() {
+        var sb = new StringBuilder();
+        var q1 = this.Link;
+        while (q1.Exp >= 0) {
+            var x = q1.Exp / 100;
+            var y = (q1.Exp - (x*100)) / 10;
+            var z = (q1.Exp - (x*100) - (y*10));
+            var xexp = (x>1) ? $"x^{x}" : (x==1)? "x" : "";
+            var yexp = (y>1) ? $"y^{y}" : (y==1)? "y" : "";
+            var zexp = (z>1) ? $"z^{z}" : (z==1)? "z" : "";
+            var sgn = (q1.Coef >= 0) ? $"+" : $"-";
+            var sgncoef = (Abs(q1.Coef) > 1) ? $"{sgn}{Abs(q1.Coef)}" : $"{sgn}";
+            sb.Append($"{sgncoef}{xexp}{yexp}{zexp} ");
+            q1 = q1.Link;
+        }
+        if (sb.Length>0) {
+            if (sb[0]=='+')
+                sb.Remove(0,1);
+            sb.Remove(sb.Length-1,1);
+        }
+        return sb.ToString();
+    }
 }
 

@@ -10,7 +10,7 @@ public interface IDeque<T> {
     void Enqueue(T item);
 }
 
-// Wraps double-linked list LinkedList<T> to get good insert/delete performance
+// Wraps double-linked list LinkedList<T> to get good O(1) insert/delete performance
 public class Deque<T> : IDeque<T>
 {
     LinkedList<T> items;
