@@ -7,5 +7,10 @@ public class Tree<T> {
         this.Level = level;
         this.Value = value;
     }
+    public Tree(T value, Tree<T> left = null, Tree<T> right = null) {
+        Value = value;
+        Left = left;
+        Right = right;
+    }
 }
 

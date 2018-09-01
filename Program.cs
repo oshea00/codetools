@@ -11,7 +11,9 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestCircularLists();
+        TreeTraversalStackIter();
+        TreeTraversalsRecurse();
+        //TestCircularLists();
         //TestDeque();
         //RunTopologicalSort();
         //TestGcd();
@@ -36,6 +38,156 @@ class Program
         //TestPermsOfR();
         //TestNChooseR();
         //MissingItems();
+    }
+
+    private static void TreeTraversalStackIter()
+    {
+        var tree = 
+        new Tree<string>("A",
+            new Tree<string>("B",
+                new Tree<string>("D")),
+            new Tree<string>("C",
+                new Tree<string>("E",
+                    null,
+                    new Tree<string>("G")),
+                new Tree<string>("F",
+                    new Tree<string>("H"),
+                    new Tree<string>("J"))));
+
+        var visits = new List<string>();
+
+        // In-Order  l v r  "Visit Then Right"
+        var visit = new Func<Tree<string>,string>(t=>t.Value);
+        var s = new Stack<Tree<string>>();
+        var p = tree;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    visits.Add(visit(p)); // Visit Then Right
+                    p = p.Right;
+                }
+            }
+            else {
+                s.Push(p);
+                p = p.Left;
+            }
+        }
+        "Iter In-Order:".Dump();
+        visits.Dump<string>();
+        visits.Clear();
+
+        // Pre-order  v l r "Visit Then Left..."
+        p = tree;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    p = p.Right;
+                }
+            }
+            else {
+                s.Push(p);
+                visits.Add(visit(p)); // Visit Then Left 
+                p = p.Left;
+            }
+        }
+        "Iter Pre-Order:".Dump();
+        visits.Dump<string>();
+        visits.Clear();
+
+        // post-order  l r v "Visit If Right Visited"
+        p = tree;
+        var priorp = p;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    // Visit if right visited
+                    if (p.Right == null || p.Right == priorp) {
+                        visits.Add(visit(p));
+                        priorp = p;
+                        p = null;
+                    } else {
+                        s.Push(p);
+                        p = p.Right;
+                    }
+                }
+            }
+            else {
+                s.Push(p);
+                p = p.Left;
+            }
+        }
+        "Iter Post-Order:".Dump();
+        visits.Dump<string>();
+    }
+
+    private static void TreeTraversalsRecurse()
+    {
+        var tree = 
+        new Tree<string>("A",
+            new Tree<string>("B",
+                new Tree<string>("D")),
+            new Tree<string>("C",
+                new Tree<string>("E",
+                    null,
+                    new Tree<string>("G")),
+                new Tree<string>("F",
+                    new Tree<string>("H"),
+                    new Tree<string>("J"))));
+
+        var visits = new List<string>();
+
+        var visit = new Func<Tree<string>,string>(t=>t.Value);
+
+        Action<Tree<string>> inOrder = null;
+        inOrder = new Action<Tree<string>>(t=>{
+            if (t==null) return;
+            inOrder(t.Left);   
+            visits.Add(visit(t));
+            inOrder(t.Right);
+        });
+        inOrder(tree);
+        "In-Order:".Dump();
+        visits.Dump<string>();
+        visits.Clear();
+
+        Action<Tree<string>> preOrder = null;
+        preOrder = new Action<Tree<string>>(t=>{
+            if (t==null) return;
+            visits.Add(visit(t));
+            preOrder(t.Left);
+            preOrder(t.Right);
+        });
+        preOrder(tree);
+        "Pre-Order:".Dump();
+        visits.Dump<string>();
+        visits.Clear();
+
+        Action<Tree<string>> postOrder = null;
+        postOrder = new Action<Tree<string>>(t=>{
+            if (t==null) return;
+            postOrder(t.Left);
+            postOrder(t.Right);
+            visits.Add(visit(t)); 
+        });
+        postOrder(tree);
+        "Post-Order:".Dump();
+        visits.Dump<string>();
+
     }
 
     private static void TestCircularLists()
