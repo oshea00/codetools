@@ -11,8 +11,11 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TreeTraversalStackIter();
-        TreeTraversalsRecurse();
+        //ThreadedTreeBuildAndTraverse();
+        TestTreeTraversalThreaded();
+        TestThreadedInOrderSuccessor();
+        //TreeTraversalStackIter();
+        //TreeTraversalsRecurse();
         //TestCircularLists();
         //TestDeque();
         //RunTopologicalSort();
@@ -38,6 +41,106 @@ class Program
         //TestPermsOfR();
         //TestNChooseR();
         //MissingItems();
+    }
+
+    private static void TestTreeTraversalThreaded()
+    {
+        var a = new Tree<string>("A");
+        var b = new Tree<string>("B");
+        var c = new Tree<string>("C");
+        var root = a;
+
+        // A links
+        a.Left = b;
+        a.LeftSoft = false;
+        a.Right = c;
+        a.RightSoft = false;
+        // B links
+        b.Left = c;
+        b.LeftSoft = true;
+        b.Right = a;
+        b.RightSoft = true;
+        // C links
+        c.Left = a;
+        c.LeftSoft = true;
+        c.Right = b;
+        c.RightSoft = true;
+
+        var inOrder = new Func<Tree<string>,List<string>>(t=>{
+            var visits = new List<string>();
+            var q = t;
+            while (true) {
+                q = q.ThreadedSuccessorInOrder();
+                visits.Add(q.Value);      
+                if (q==t)
+                    break;
+            }
+            return visits;
+        });
+        var result = inOrder(a);
+        $"In-Order Threaded:".Dump();
+        AssertAreEqual(new string[] {"C","B","A"},result);
+        result.Dump<string>();
+        result = inOrder(b);
+        AssertAreEqual(new string[] {"A","C","B"},result);
+        result.Dump<string>();
+        result = inOrder(c);
+        AssertAreEqual(new string[] {"B","A","C"},result);
+        result.Dump<string>();
+    }
+
+    private static void ThreadedTreeBuildAndTraverse()
+    {
+
+        var addPreOrder = new Action<Tree<string>,string>((t,s)=>{
+
+        });
+
+
+    }
+
+    private static void TestThreadedInOrderSuccessor()
+    {   
+        //       A        $ = InOrder
+        //     /   \
+        //    B     C     B -> A -> C -> B  P$
+        //                B -> C -> A -> B  $P
+        //
+        // in order    A l-> B -r-> A r-> C -l-> Head    l-> == hard left  r-> == hard right
+        //             C -l-> A l-> B -l-> C              -l-> == soft left -r-> == soft right
+        var a = new Tree<string>("A");
+        var b = new Tree<string>("B");
+        var c = new Tree<string>("C");
+        var root = a;
+
+        // A links
+        a.Left = b;
+        a.LeftSoft = false;
+        a.Right = c;
+        a.RightSoft = false;
+        // B links
+        b.Left = c;
+        b.LeftSoft = true;
+        b.Right = a;
+        b.RightSoft = true;
+        // C links
+        c.Left = a;
+        c.LeftSoft = true;
+        c.Right = b;
+        c.RightSoft = true;
+
+        AssertAreEqual("A",b.ThreadedSuccessorInOrder().Value);
+        AssertAreEqual("C",a.ThreadedSuccessorInOrder().Value);
+        AssertAreEqual("B",c.ThreadedSuccessorInOrder().Value);
+        AssertAreEqual("C",b.ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("B",a.ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("A",c.ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("A",a.ThreadedSuccessorInOrder().ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("B",b.ThreadedSuccessorInOrder().ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("C",c.ThreadedSuccessorInOrder().ThreadedPredeccessorInOrder().Value);
+        AssertAreEqual("A",a.ThreadedPredeccessorInOrder().ThreadedSuccessorInOrder().Value);
+        AssertAreEqual("B",b.ThreadedPredeccessorInOrder().ThreadedSuccessorInOrder().Value);
+        AssertAreEqual("C",c.ThreadedPredeccessorInOrder().ThreadedSuccessorInOrder().Value);
     }
 
     private static void TreeTraversalStackIter()
@@ -81,7 +184,7 @@ class Program
         visits.Dump<string>();
         visits.Clear();
 
-        // Pre-order  v l r "Visit Then Left..."
+        // Pre-order  v l r "Visit Then Left"
         p = tree;
         while (true) {
             if (p == null)
@@ -139,15 +242,8 @@ class Program
     {
         var tree = 
         new Tree<string>("A",
-            new Tree<string>("B",
-                new Tree<string>("D")),
-            new Tree<string>("C",
-                new Tree<string>("E",
-                    null,
-                    new Tree<string>("G")),
-                new Tree<string>("F",
-                    new Tree<string>("H"),
-                    new Tree<string>("J"))));
+            new Tree<string>("B"),
+            new Tree<string>("C"));
 
         var visits = new List<string>();
 
