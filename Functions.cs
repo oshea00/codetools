@@ -457,6 +457,137 @@ public static class Functions {
         Console.WriteLine(sb.ToString());
     }
 
+    public static string ListToString<T>(this List<T> list) {
+        var sb = new StringBuilder();
+        sb.Append("[");
+        foreach (var l in list) {
+            sb.Append($"{l.ToString()},");
+        }
+        sb.Remove(sb.Length-1,1);
+        sb.Append("]");
+        return sb.ToString();
+    }
+
+    public static string TreeInOrderToString(this Tree<string> t) {
+        var visits = new List<string>();
+        var s = new Stack<Tree<string>>();
+        var p = t;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    visits.Add(p.Value); // Visit Then Right
+                    p = p.Right;
+                }
+            }
+            else {
+                s.Push(p);
+                p = p.Left;
+            }
+        }
+        return visits.ListToString();
+    }
+
+    public static string TreePreOrderToString(this Tree<string> t) {
+        var visits = new List<string>();
+        var s = new Stack<Tree<string>>();
+        var p = t;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    p = p.Right;
+                }
+            }
+            else {
+                s.Push(p);
+                visits.Add(p.Value); // Visit Then Left 
+                p = p.Left;
+            }
+        }
+        return visits.ListToString();
+    }
+
+    public static string TreePostOrderToString(this Tree<string> t) {
+        var visits = new List<string>();
+        var s = new Stack<Tree<string>>();
+        var p = t;
+        var priorp = p;
+        while (true) {
+            if (p == null)
+            {
+                if (s.Count==0) {
+                    break;
+                }
+                else {
+                    p = s.Pop();
+                    // Visit if right visited
+                    if (p.Right == null || p.Right == priorp) {
+                        visits.Add(p.Value);
+                        priorp = p;
+                        p = null;
+                    } else {
+                        s.Push(p);
+                        p = p.Right;
+                    }
+                }
+            }
+            else {
+                s.Push(p);
+                p = p.Left;
+            }
+        }
+        return visits.ListToString();
+    }
+
+    public static Tree<string> TreeFromExp(string e) {
+        var expr = e.ToCharArray();
+        var s = new Stack<Tree<string>>();
+        Tree<string> t = new Tree<string>("root");
+        s.Push(t);
+        var q = t;
+        var topTree = t;
+        var i = 0;
+        var level =0;
+        while (i < expr.Length && s.Count != 0) {
+            switch (expr[i]) {
+                case '(' : 
+                    level += 1;
+                    topTree.Left = new Tree<string>(expr[i+1].ToString());
+                    topTree = topTree.Left;
+                    s.Push(topTree);
+                    i += 1;
+                    //$"toptree = {topTree.Value}".Dump();
+                    break;
+                case ')' :
+                    topTree = s.Pop();
+                    level -= 1;
+                    //$"<={s.Peek().Value} {level}".Dump();
+                    break;
+                case ',' :
+                    q = topTree;
+                    while (q.Right != null)
+                        q = q.Right;
+                    q.Right = new Tree<string>(expr[i+1].ToString());
+                    topTree = q.Right;
+                    i += 1;
+                    //$"To {s.Peek().Value} add sibling {topTree.Value}".Dump();
+                    break;
+                default : break;
+            }
+            i += 1;
+        }
+        return t;
+    }
+
 }
 
 class PolyTerm {

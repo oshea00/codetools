@@ -11,36 +11,134 @@ class Program
 {   
     static void Main(string[] args)
     {
-        //ThreadedTreeBuildAndTraverse();
-        TestTreeTraversalThreaded();
-        TestThreadedInOrderSuccessor();
-        //TreeTraversalStackIter();
-        //TreeTraversalsRecurse();
-        //TestCircularLists();
-        //TestDeque();
-        //RunTopologicalSort();
-        //TestGcd();
-        //TestGetPrimes();
-        //TestPermutations();
-        //TestMaxProduct3();
-        //TestChooseMinMissing();
-        //TestTraverseChoices();
-        //TestMinAvg();
-        //TestHowManyDivisible();   
-        //TestFindMinImpact();
-        //TestCountTransitions();
-        //RunMushroomChamp();
-        //TestMinHeap();
-        //TestPrefixSums();
-        //TestUpdateCounters();            
-        //TestWhen1ThruXFound();
-        //TestCanSwapToEqual();
-        //TestItemCounts();
-        //TestMinSum();
-        //TestAsserts();
-        //TestPermsOfR();
-        //TestNChooseR();
-        //MissingItems();
+        TestTreeFromExpr();   
+        // TestMergeSortIter();
+        // TestMergeSort();
+        // TestTreeTraversalThreaded();
+        // TestThreadedInOrderSuccessor();
+        // TreeTraversalStackIter();
+        // TreeTraversalsRecurse();
+        // TestCircularLists();
+        // TestDeque();
+        // RunTopologicalSort();
+        // TestGcd();
+        // TestGetPrimes();
+        // TestPermutations();
+        // TestMaxProduct3();
+        // TestChooseMinMissing();
+        // TestTraverseChoices();
+        // TestMinAvg();
+        // TestHowManyDivisible();   
+        // TestFindMinImpact();
+        // TestCountTransitions();
+        // RunMushroomChamp();
+        // TestMinHeap();
+        // TestPrefixSums();
+        // TestUpdateCounters();            
+        // TestWhen1ThruXFound();
+        // TestCanSwapToEqual();
+        // TestItemCounts();
+        // TestMinSum();
+        // TestAsserts();
+        // TestPermsOfR();
+        // TestNChooseR();
+        // MissingItems();
+    }
+
+    private static void TestTreeFromExpr()
+    {
+        var expr = "(A(B,C(K)),D(E(H),F(J),G))";
+        var t = TreeFromExp(expr);
+
+        $"Tree Expression: {expr}".Dump();
+        "Iter In-Order:".Dump();
+        t.TreeInOrderToString().Dump();  
+        AssertAreEqual("[B,K,C,H,J,G,F,E,D,A,root]",t.TreeInOrderToString());   
+
+        "Iter Pre-Order:".Dump();
+        t.TreePreOrderToString().Dump();
+        AssertAreEqual("[root,A,B,C,K,D,E,H,F,J,G]",t.TreePreOrderToString());
+
+        "Post-Order:".Dump();
+        t.TreePostOrderToString().Dump();
+        AssertAreEqual("[K,G,J,F,H,E,D,C,B,A,root]",t.TreePostOrderToString());
+
+        $"Empty Expression {@""""""} ".Dump();
+        t = TreeFromExp("");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[root]",t.TreeInOrderToString());
+
+        $"Empty sub-tree () ".Dump();
+        t = TreeFromExp("()");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[),root]",t.TreeInOrderToString());
+
+        $"Empty nested sub-tree (()) ".Dump();
+        t = TreeFromExp("(())");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[(,root]",t.TreeInOrderToString());
+
+        $"Empty odd nested level sub-trees ((((())))) ".Dump();
+        t = TreeFromExp("((((()))))");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[),(,(,root]",t.TreeInOrderToString());
+
+        $"Empty insane odd nested level sub-trees ((((((())))))) ".Dump();
+        t = TreeFromExp("((((((()))))))");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[),(,(,(,root]",t.TreeInOrderToString());
+
+        $"Empty even nested sub-trees (((()))) ".Dump();
+        t = TreeFromExp("(((())))");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[(,(,root]",t.TreeInOrderToString());
+
+        $"Empty insane even nested sub-trees (((((((()))))))) ".Dump();
+        t = TreeFromExp("(((((((())))))))");
+        t.TreeInOrderToString().Dump();
+        AssertAreEqual("[(,(,(,(,root]",t.TreeInOrderToString());
+
+    }
+
+    public static void ThreadedSuccessorInOrderHead(Tree<string> head, Action<string> visit) {
+        Tree<string> p = head;
+        Tree<string> q = null;
+        while (true) {
+            q = p.Left;
+            while (p.LeftThread==false) {
+                p = q;
+                q = p.Left;
+            }
+            if (p==head)
+                break;
+            visit(p.Value);
+            while (p.RightThread) {
+                if (p==head)
+                    break;
+                visit(p.Value);
+                p = p.Right;
+            }
+            q = p.Right;
+            p = q;
+        }
+    }
+
+    private static void TestMergeSortIter()
+    {
+        var s = new MergeSortIter<char>();
+        var a = "MERGESORTEXAMPLE".ToCharArray();
+        s.Sort(a);
+        AssertAreEqual(new List<char>("AEEEEGLMMOPRRSTX".ToCharArray()),a);
+        a.Dump<char>();
+    }
+
+    private static void TestMergeSort()
+    {
+        var s = new MergeSort<char>();
+        var a = "MERGESORTEXAMPLE".ToCharArray();
+        s.Sort(a);
+        AssertAreEqual(new List<char>("AEEEEGLMMOPRRSTX".ToCharArray()),a);
+        a.Dump<char>();
     }
 
     private static void TestTreeTraversalThreaded()
@@ -52,19 +150,19 @@ class Program
 
         // A links
         a.Left = b;
-        a.LeftSoft = false;
+        a.LeftThread = false;
         a.Right = c;
-        a.RightSoft = false;
+        a.RightThread = false;
         // B links
         b.Left = c;
-        b.LeftSoft = true;
+        b.LeftThread = true;
         b.Right = a;
-        b.RightSoft = true;
+        b.RightThread = true;
         // C links
         c.Left = a;
-        c.LeftSoft = true;
+        c.LeftThread = true;
         c.Right = b;
-        c.RightSoft = true;
+        c.RightThread = true;
 
         var inOrder = new Func<Tree<string>,List<string>>(t=>{
             var visits = new List<string>();
@@ -89,16 +187,6 @@ class Program
         result.Dump<string>();
     }
 
-    private static void ThreadedTreeBuildAndTraverse()
-    {
-
-        var addPreOrder = new Action<Tree<string>,string>((t,s)=>{
-
-        });
-
-
-    }
-
     private static void TestThreadedInOrderSuccessor()
     {   
         //       A        $ = InOrder
@@ -115,19 +203,19 @@ class Program
 
         // A links
         a.Left = b;
-        a.LeftSoft = false;
+        a.LeftThread = false;
         a.Right = c;
-        a.RightSoft = false;
+        a.RightThread = false;
         // B links
         b.Left = c;
-        b.LeftSoft = true;
+        b.LeftThread = true;
         b.Right = a;
-        b.RightSoft = true;
+        b.RightThread = true;
         // C links
         c.Left = a;
-        c.LeftSoft = true;
+        c.LeftThread = true;
         c.Right = b;
-        c.RightSoft = true;
+        c.RightThread = true;
 
         AssertAreEqual("A",b.ThreadedSuccessorInOrder().Value);
         AssertAreEqual("C",a.ThreadedSuccessorInOrder().Value);
@@ -147,7 +235,7 @@ class Program
     {
         var tree = 
         new Tree<string>("A",
-            new Tree<string>("B",
+            new Tree<string>("B",                                                                                      
                 new Tree<string>("D")),
             new Tree<string>("C",
                 new Tree<string>("E",
