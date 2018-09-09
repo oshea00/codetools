@@ -467,6 +467,16 @@ public static class Functions {
         sb.Append("]");
         return sb.ToString();
     }
+    public static string ListToString<T>(this T[] list) {
+        var sb = new StringBuilder();
+        sb.Append("[");
+        foreach (var l in list) {
+            sb.Append($"{l.ToString()},");
+        }
+        sb.Remove(sb.Length-1,1);
+        sb.Append("]");
+        return sb.ToString();
+    }
 
     public static string TreeInOrderToString(this Tree<string> t) {
         var visits = new List<string>();
@@ -587,6 +597,60 @@ public static class Functions {
         }
         return t;
     }
+    public static void Huffman(int[] w) {
+        // # A[m..2m-1] original weights as external node weights
+        // # A[i] weight of node internal node i
+        // # L[i] R[i] left and right children of node i
+        var m = w.Length-1;
+        var A = new int[2*m+1];
+        //$"len A={2*m+1}".Dump();
+        var L = new int[m+1];
+        var R = new int[m+1];
+        // # H1
+        for (int z=1;z < m+1; z++)
+            A[m-1+z]=w[z];
+        A[2*m] = 9999;
+        var x = m;
+        var i = m + 1;
+        var j = m - 1;
+        var k = m;
+        var y = 0;
+        // # H2
+        while (true) {
+            if (j<k || A[i] <= A[j]) {
+                y=i;
+                i = i+1;
+            } else {
+                y=j;
+                j=j-1;
+            }
+            // H3.
+            k=k-1;
+            L[k]=x;
+            R[k]=y;
+            A[k]=A[x]+A[y];
+            // # H4
+            if (k==1)
+                break;
+            // # H5
+            if (A[y] < 0) {
+                j=k;
+                i=y+1;
+                // A[i] s/b > A[j]
+            }
+            if (A[i] <= A[j]) {
+                x=i;
+                i=i+1;
+            } else {
+                x=j;
+                j=j-1;
+            }
+        }
+            
+        A.ListToString<int>().Dump();
+        L.ListToString<int>().Dump();
+        R.ListToString<int>().Dump();
+    }
 
 }
 
@@ -631,5 +695,6 @@ class PolyTerm {
         }
         return sb.ToString();
     }
+
 }
 

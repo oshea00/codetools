@@ -11,7 +11,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestTreeFromExpr();   
+        TestHuffman();
+        // TestTreeFromExpr();   
         // TestMergeSortIter();
         // TestMergeSort();
         // TestTreeTraversalThreaded();
@@ -45,17 +46,23 @@ class Program
         // MissingItems();
     }
 
+    private static void TestHuffman()
+    {
+        Huffman(new int[] {0,1,4,9,16,25,36,49,64,81,100});
+    }
+
     private static void TestTreeFromExpr()
     {
         var expr = "(A(B,C(K)),D(E(H),F(J),G))";
         var t = TreeFromExp(expr);
 
         $"Tree Expression: {expr}".Dump();
-        "Iter In-Order:".Dump();
+        // post-order for "trees" corr in-order for binary trees
+        "In-Order binary = forest postorder):".Dump();
         t.TreeInOrderToString().Dump();  
         AssertAreEqual("[B,K,C,H,J,G,F,E,D,A,root]",t.TreeInOrderToString());   
 
-        "Iter Pre-Order:".Dump();
+        "Pre-Order (forests = binary):".Dump();
         t.TreePreOrderToString().Dump();
         AssertAreEqual("[root,A,B,C,K,D,E,H,F,J,G]",t.TreePreOrderToString());
 
