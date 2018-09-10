@@ -54,9 +54,27 @@ class Program
         // A - B - D - E
         //             |
         //             G
-        var g = new Graph<string>(new List<string>{
+        var a = new Graph<string>(new List<string>{
             "A","B","B","C","B","D","D","E","E","F","E","G"});
-        g.ToString().Dump();
+        a.ToString().Dump();
+
+        //     3       6
+        //     |       |
+        // 1 - 2 - 4 - 5
+        //             |
+        //             7
+        var n = new Graph<int>(new List<int>() {1,2,2,3,2,4,4,5,5,6,5,7});
+        n.ToString().Dump();
+
+        // x + y + z
+        var pTail = new PolyTerm(); 
+        pTail.Link = new PolyTerm(1,100,new PolyTerm(1,10,new PolyTerm(1,1,pTail)));
+        // x^2 - 2y - z
+        var qTail = new PolyTerm();
+        qTail.Link = new PolyTerm(1,200,new PolyTerm(-2,10,new PolyTerm(-1,1,qTail)));
+
+        var p = new Graph<PolyTerm>(new List<PolyTerm> {pTail,qTail});
+        p.ToString().Dump();
     }
 
     private static void TestHuffman()
