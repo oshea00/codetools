@@ -11,7 +11,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestGraph();
+        TestUnionFind();
+        //TestGraph();
         //TestHuffman();
         // TestTreeFromExpr();   
         // TestMergeSortIter();
@@ -45,6 +46,23 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestUnionFind()
+    {
+        // 0 1 2 3 4 5 6 7 8 9 sites
+        // 0 1 2 4 4 6 6 7 4 9 component ids
+        //
+        var pairs = new int[]{4,3, 3,8, 6,5, 9,4, 2,1, 5,0, 7,2, 6,1};
+        var uf = new UnionFind(10);
+        AssertAreEqual(10,uf.ComponentCount);
+        AssertAreEqual(9,uf.FindComponent(9));
+        for (int i=0;i<pairs.Length-1;i+=2) {
+            uf.Union(pairs[i],pairs[i+1]);
+            uf.Dump();
+        }
+        AssertAreEqual(2,uf.ComponentCount);
+
     }
 
     private static void TestGraph()

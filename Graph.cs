@@ -4,11 +4,11 @@ using System.Text;
 using System.Linq;
 
 public class Graph<T> {
-    Dictionary<T,HashSet<T>> vertices;
+    Dictionary<T,List<T>> vertices;
 
     public Graph()
     {
-        vertices = new Dictionary<T, HashSet<T>>();
+        vertices = new Dictionary<T, List<T>>();
     }
 
     public Graph(List<T> edges) : this() {
@@ -16,10 +16,10 @@ public class Graph<T> {
             throw new Exception("Edge list must be an even count.");
         for (int i=0;i<edges.Count-1;i+=2) {
             if (!vertices.ContainsKey(edges[i])) {
-                vertices.Add(edges[i],new HashSet<T>());
+                vertices.Add(edges[i],new List<T>());
             }
             if (!vertices.ContainsKey(edges[i+1])) {
-                vertices.Add(edges[i+1],new HashSet<T>());
+                vertices.Add(edges[i+1],new List<T>());
             }
             vertices[edges[i]].Add(edges[i+1]);
             vertices[edges[i+1]].Add(edges[i]);
