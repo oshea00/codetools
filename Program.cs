@@ -11,7 +11,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestHuffman();
+        TestGraph();
+        //TestHuffman();
         // TestTreeFromExpr();   
         // TestMergeSortIter();
         // TestMergeSort();
@@ -44,6 +45,18 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestGraph()
+    {
+        //     C       F
+        //     |       |
+        // A - B - D - E
+        //             |
+        //             G
+        var g = new Graph<string>(new List<string>{
+            "A","B","B","C","B","D","D","E","E","F","E","G"});
+        g.ToString().Dump();
     }
 
     private static void TestHuffman()
