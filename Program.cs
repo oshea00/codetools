@@ -11,9 +11,15 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestUnionFind();
-        //TestGraph();
-        //TestHuffman();
+        TestIsBipartite();
+        // TestHasCycle();
+        // TestFindConnectedComponents();
+        // TestBFSPaths();
+        // TestPaths();
+        // TestGetConnectedDFS();
+        // TestGraph();
+        // TestUnionFind();
+        // TestHuffman();
         // TestTreeFromExpr();   
         // TestMergeSortIter();
         // TestMergeSort();
@@ -46,6 +52,81 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestIsBipartite()
+    {
+        var g = new Graph<int>(new List<int>
+        {0,6, 6,7, 7,8, 0,5, 0,1, 0,2, 1,3, 6,4, 3,5, 
+         5,4, 8,10, 9,10, 9,11, 10,12, 11,12});
+         $"Is Bipartite = {g.IsBipartite}".Dump();
+         AssertIsTrue(g.IsBipartite);
+    }
+
+    private static void TestHasCycle()
+    {
+        var g = new Graph<int>(new List<int>
+        {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
+         7,8, 9,11, 5,3});
+         $"Has Cycle = {g.HasCycle}".Dump();
+         AssertIsTrue(g.HasCycle);
+    }
+
+    private static void TestFindConnectedComponents()
+    {
+        var g = new Graph<int>(new List<int>
+        {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
+         7,8, 9,11, 5,3});
+         g.FindComponents();
+         var comps = g.GetComponentIds();
+         $"Components {comps.Count} :".Dump();
+         comps.ForEach(c=>{
+             g.GetVerticesInComponent(c).ListToString().Dump();
+         });
+         AssertAreEqual(g.IsConnected(0,3),g.SameComponent(0,3));
+    }
+
+    private static void TestBFSPaths()
+    {
+        // Finds shortest path using BFS
+        var g = new Graph<int>(new List<int>
+        {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
+         7,8, 9,11, 5,3});
+        var paths = new BFSPaths<int>(g,0);
+        AssertIsTrue(paths.HasPathTo(3));
+        $"Shortest path 0 to 3".Dump();
+        paths.PathTo(3).ListToString().Dump();
+        AssertAreEqual("[0,5,3]",paths.PathTo(3).ListToString());
+    }
+
+    private static void TestPaths()
+    {
+        // Finds paths but path length is dependent
+        // on edge order used to build graph - may not be
+        // shortst path - for that see BFS.
+        var g = new Graph<int>(new List<int>
+        {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
+         7,8, 9,11, 5,3});
+        var paths = new Paths<int>(g,0);
+        AssertIsTrue(paths.HasPathTo(3));
+        $"A path 0 to 3".Dump();
+        paths.PathTo(3).ListToString().Dump();
+        AssertAreEqual("[0,5,4,3]",paths.PathTo(3).ListToString());
+
+    }
+
+    private static void TestGetConnectedDFS()
+    {
+        var g = new Graph<int>(new List<int>
+        {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
+         7,8, 9,11, 5,3});
+         var s = new ConnectedVertices<int>(g,0);
+         AssertAreEqual(7,s.Count);
+         $"Vertices connected to 0".Dump();
+         s.GetConnected().ListToString().Dump();
+         AssertAreEqual("[0,5,4,3,1,6,2]",s.GetConnected().ListToString());
+         AssertIsTrue(g.IsConnected(0,4));
+         AssertIsTrue(g.IsConnected(0,3));
     }
 
     private static void TestUnionFind()
