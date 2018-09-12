@@ -57,26 +57,26 @@ public class MovieDB {
     public string MovieWithMostActors() {
         int maxActors=0;
         int movieId=0;
-        Graph.GetVerticesWithColor(false).ForEach(m=>{
+        foreach (var m in Graph.GetVerticesWithColor(false)) {
             var d = g.Degree(m);
             if (d>maxActors) {
                 maxActors = d;
                 movieId = m; 
             }
-        });
+        } 
         return $"[{movieId}] {labels[movieId]} has {maxActors} actors.";
     }
 
     public string ActorWithMostMovies() {
         int max=0;
         int actorid=0;
-        Graph.GetVerticesWithColor(true).ForEach(a=>{
+        foreach (var a in Graph.GetVerticesWithColor(true)) {
             var degree = Graph.Degree(a); 
             if (degree>max) {
                 max = degree;
                 actorid = a;
             }
-        });
+        }
         return $"[{actorid}] {labels[actorid]} has the most movies: {max}.";
         
     }

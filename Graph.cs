@@ -43,18 +43,18 @@ public class Graph<T> {
 
     void dfsCycles(T v, T u) {
         Mark(v);
-        Adjacent(v).ForEach(w=>{
+        foreach (var w in Adjacent(v)) {
             if (!IsMarked(w))
                 dfsCycles(w,v);
             else 
             if (!w.Equals(v))
                 hasCycle = true;
-        });
+        }
     }
 
     void dfsBipartite(T v) {
         Mark(v);
-        Adjacent(v).ForEach(w=>{
+        foreach(var w in Adjacent(v)){
             if (!IsMarked(w)) {
                 color[w] = !color[v];
                 dfsBipartite(w);
@@ -63,7 +63,7 @@ public class Graph<T> {
             if (color[w] == color[v]) {
                 isBipartite = false;
             }
-        });
+        }
     }
 
     public List<T> GetVerticesWithColor(bool isColor) {
