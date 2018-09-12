@@ -1,0 +1,59 @@
+================ KEVIN BACON REPORT ================
+All Movies With Kevin Bacon (27):
+->Animal House (1978)
+->Apollo 13 (1995)
+->Beauty Shop (2005)
+->Diner (1982)
+->Few Good Men, A (1992)
+->Flatliners (1990)
+->Footloose (1984)
+->Friday the 13th (1980)
+->He Said, She Said (1991)
+->Hollow Man (2000)
+->In the Cut (2003)
+->JFK (1991)
+->Murder in the First (1995)
+->My Dog Skip (2000)
+->Mystic River (2003)
+->Novocaine (2001)
+->Picture Perfect (1997)
+->Planes, Trains & Automobiles (1987)
+->River Wild, The (1994)
+->She's Having a Baby (1988)
+->Sleepers (1996)
+->Stir of Echoes (1999)
+->Trapped (2002)
+->Tremors (1990)
+->Where the Truth Lies (2005)
+->Wild Things (1998)
+->Woodsman, The (2004)
+
+Some Actors Connected to Kevin Bacon Somehow (114604):
+->Brown, Bryan (I)
+->Henderson, Dick (II)
+->Gray, Ian (I)
+->Woodward, Edward
+->Thompson, Jack (I)
+->Procanin, Michael
+->Bernard, Hank
+->Nicholls, Jon
+->Knez, Bruno
+->Steele, Rob (I)
+->Lovett, Alan
+->Mullinar, Rod
+->Ball, Ray (I)
+->Rodger, Ron
+->Mann, Trevor (I)
+->Smith, Chris (I)
+->Cisse, Halifa
+->Cassell, Alan (I)
+->Osborn, Peter
+->Pfitzner, John
+->Waters, John (III)
+->Tingwell, Charles 'Bud'
+->Kiefel, Russell
+->Ball, Vincent (I)
+->Donovan, Terence (I)
+...
+
+More to come!

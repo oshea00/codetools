@@ -66,6 +66,15 @@ public class Graph<T> {
         });
     }
 
+    public List<T> GetVerticesWithColor(bool isColor) {
+        var c = new List<T>();
+        foreach (var v in vertices.Keys) {
+            if (color[v]==isColor)
+                c.Add(v);
+        }
+        return c;
+    }
+
     public bool HasCycle => hasCycle;
     public bool IsBipartite => isBipartite;
 

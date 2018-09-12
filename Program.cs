@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using static Functions;
@@ -11,7 +12,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestIsBipartite();
+        TestMovies();
+        //TestIsBipartite();
         // TestHasCycle();
         // TestFindConnectedComponents();
         // TestBFSPaths();
@@ -52,6 +54,20 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestMovies()
+    {
+        var db = new MovieDB();
+        AssertAreEqual(119412,db.Count);
+        $"IsBipartite {db.Graph.IsBipartite}".Dump();
+        AssertIsTrue(db.Graph.IsBipartite);
+        db.Graph.FindComponents();
+        $"Vertices {db.Graph.VerticeCount}, Edges {db.Graph.EdgeCount}".Dump();
+        $"Movie graph has {db.Graph.GetComponentIds().Count} components.".Dump();
+        db.MovieWithMostActors().Dump();
+        db.ActorWithMostMovies().Dump();
+        File.WriteAllText("kevinbacon.txt",db.KevinBaconReport());
     }
 
     private static void TestIsBipartite()
