@@ -328,6 +328,15 @@ public static class Functions {
         }
     }
 
+    public static void AssertIsNull<T>(T val)
+    {
+        if (val != null)
+        {
+            Console.WriteLine("Expected Null");
+            Exit();
+        }
+    }
+
     public static void AssertAreEqual<T>(T a, T b) {
         if (!a.Equals(b)) {
             Console.WriteLine($"Expected {a} got {b}");

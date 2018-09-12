@@ -12,7 +12,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestMovies();
+        TestLinked();
+        // TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
         // TestFindConnectedComponents();
@@ -54,6 +55,45 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestLinked()
+    {
+        var empty = new List<string>();
+        var items = new List<string> {"A","B","C"};
+        var emptylist = Linked.LList(empty);
+        var itemslist = Linked.LList(items);
+
+        AssertIsTrue(Linked.IsCyclic(emptylist)==false);
+        var llist = Linked.LList(items);
+        AssertIsTrue(Linked.IsCyclic(llist)==false);
+        AssertAreEqual(0,Linked.Count(emptylist));
+        AssertAreEqual(3,Linked.Count(itemslist));
+
+        var a = new NodeLink<string>("A");
+        var b = new NodeLink<string>("B");
+        var c = new NodeLink<string>("C");
+        a.Next = b;
+        b.Next = c;
+        c.Next = a;
+        AssertIsTrue(Linked.IsCyclic(a));
+        AssertAreEqual("C",Linked.CycleNode(a).Value);
+        var top = new NodeLink<string>();
+        AssertIsTrue(Linked.IsCyclic(top));
+        AssertIsNull(Linked.CycleNode(top).Value);
+        Linked.ToString(itemslist).Dump();
+        AssertAreEqual("[A,B,C]",Linked.ToString(itemslist));
+        Linked.ToString(emptylist).Dump();
+        AssertAreEqual("[]",Linked.ToString(emptylist));
+        Linked.ToString(new NodeLink<string>()).Dump();
+        AssertAreEqual("[cyclic]",Linked.ToString(new NodeLink<string>()));
+        var list = Linked.Reverse(itemslist);
+        Linked.ToString(list).Dump();
+        AssertAreEqual("[C,B,A]",Linked.ToString(list));
+        var listr = Linked.Reverse(emptylist);
+        Linked.ToString(listr).Dump();
+        AssertAreEqual("[]",Linked.ToString(listr));
+
     }
 
     private static void TestMovies()
