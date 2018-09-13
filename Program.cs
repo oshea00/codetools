@@ -12,7 +12,8 @@ class Program
 {   
     static void Main(string[] args)
     {
-        TestLinked();
+        TestEncoder();
+        // TestLinked();
         // TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
@@ -55,6 +56,13 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestEncoder()
+    {
+        var encoder = new PhoneEncoder(new List<string>{"cat","bat","dog","ca","food","go"});
+        var words = encoder.Encode("228");
+        words.ListJoin().Dump();
     }
 
     private static void TestLinked()

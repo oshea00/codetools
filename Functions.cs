@@ -476,6 +476,15 @@ public static class Functions {
         sb.Append("]");
         return sb.ToString();
     }
+
+    public static string ListJoin<T>(this T[] list) {
+        return "["+String.Join(",",list)+"]";
+    }
+
+    public static string ListJoin<T>(this List<T> list) {
+        return "["+String.Join(",",list)+"]";
+    }
+    
     public static string ListToString<T>(this T[] list) {
         var sb = new StringBuilder();
         sb.Append("[");
