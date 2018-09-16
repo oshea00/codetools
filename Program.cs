@@ -4,17 +4,41 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using static Functions;
 using static Sequences;
 using static System.Math;
+
+interface ICovariant<out T> {
+    // Allows more derived T to be a less derived T
+    // i.e. we can assign a string reference to an object reference.
+    // The left side type can be more general (up casting)
+}
+interface IContravariant<in T> {
+    // Allows less derived T to be a more derived T
+    // i.e. we can assign an object reference to a string reference.
+    // The left side type can be more specific (down casting)
+}
+
+class Animal : ICovariant<Animal>, IContravariant<Animal> {
+}
+
+class Giraffe : Animal, ICovariant<Giraffe>, IContravariant<Giraffe> {
+}
+
+class Monkey : Animal, ICovariant<Monkey>, IContravariant<Monkey> {
+}
+
 
 class Program
 {   
     static void Main(string[] args)
     {
-        TestEncoder();
+        // CovarianceExample();
+        // TestEncoder();
         // TestLinked();
-        // TestMovies();
+        TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
         // TestFindConnectedComponents();
@@ -56,6 +80,36 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    public static async Task<bool> DoItAsync() {
+        Thread.Sleep(5000);
+        return true;
+    }
+
+    public static bool JustDoIt() {
+        return true;
+    }
+
+    private static void CovarianceExample()
+    {
+        ICovariant<Animal> a = new Animal();
+        ICovariant<Giraffe> g = new Giraffe();
+        a = g; // Giraffes can be upcasted implicitly to Animals
+        // Giraffes are Animals
+
+        IContravariant<Animal> ca = new Animal();
+        IContravariant<Giraffe> cg = new Giraffe();
+        cg = ca; // Animals can be downcasted implictly to Giraffes  
+                 // Animals can be Giraffes
+
+        $"{("\"")}".Dump();
+        $"I've {((true) ? "\"Made my Bed\"" : "")}".Dump();
+
+        var act = new Func<Task<bool>>(async () => await DoItAsync());
+        var result = act();
+        JustDoIt().Dump();
+        $"I've {((true) ? "\"Made my Bed\"" : "")}".Dump();
     }
 
     private static void TestEncoder()

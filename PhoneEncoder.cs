@@ -9,12 +9,10 @@ public class PhoneEncoder
         index = new Dictionary<string,List<string>>();
         foreach (var w in words) {
             var code = Charmap(w);
-            if (index.ContainsKey(code)) {
-                index[code].Add(w);
-            } else {
+            if (!index.ContainsKey(code)) {
                 index[code] = new List<string>();
-                index[code].Add(w);
             }
+            index[code].Add(w);
         }
     }
 
