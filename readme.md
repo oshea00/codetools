@@ -12,7 +12,7 @@ I present the
 ["Kevin Bacon Report"](https://raw.githubusercontent.com/oshea00/codetools/master/kevinbacon.txt)
 
 
-Seriously, amazing how fast these algorithms can be made. The example and report runs in a second or two...
+Seriously, amazing how fast these algorithms can be made. The example load, analysis, and report runs in around 1 second...
 
 ![Example Movie Run](https://raw.githubusercontent.com/oshea00/codetools/master/movies.png)
 
