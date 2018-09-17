@@ -35,10 +35,12 @@ class Program
 {   
     static void Main(string[] args)
     {
+        TestTreeDfs();
+        TestTreeBfsChildren();
         // CovarianceExample();
         // TestEncoder();
         // TestLinked();
-        TestMovies();
+        // TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
         // TestFindConnectedComponents();
@@ -80,6 +82,45 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+    }
+
+    private static void TestTreeDfs()
+    {
+        var tree = 
+            new Tree<int>(1,
+                new Tree<int>(2,
+                    new Tree<int>(3),
+                    new Tree<int>(4)),
+                new Tree<int>(5,
+                    new Tree<int>(6),
+                    new Tree<int>(7))
+                );
+
+        var traversal = new TreeDfs<int>(tree,t=>{
+            $"Visiting {t.Value}...".Dump();
+        });
+
+        traversal.Traverse();
+        traversal.TraceVisits.Dump<int>();
+    }
+
+    private static void TestTreeBfsChildren()
+    {
+        var tree = 
+            new Tree<int>(1,
+                new Tree<int>(2,
+                    new Tree<int>(4),
+                    new Tree<int>(5)),
+                new Tree<int>(3,
+                    new Tree<int>(6),
+                    new Tree<int>(7))
+                );
+        var traversal = new TreeBfsChildren<int>(tree,t=>{
+            $"Visiting {t.Value}".Dump();
+        });
+
+        traversal.Traverse();
+        traversal.TraceVisits.Dump<int>();
     }
 
     public static async Task<bool> DoItAsync() {
