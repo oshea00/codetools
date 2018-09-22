@@ -3,28 +3,42 @@ using System.Collections.Generic;
 
 public class TreeDfs<T> {
     Tree<T> tree;
-    List<T> visits;
-    Action<Tree<T>> visitor;
-    public TreeDfs(Tree<T> tree, Action<Tree<T>> visitor) {
+    Stack<Tree<T>> s;
+    Func<Tree<T>,bool> visitor;
+
+    public TreeDfs(Tree<T> tree, Func<Tree<T>,bool> visitor) {
         this.tree = tree;
         this.visitor = visitor;
-        visits = new List<T>();
-        this.visitor = visitor;
+        s = new Stack<Tree<T>>();
     }
     
-    public List<T> TraceVisits => visits;
+    bool visit(Tree<T> t) {
+        return visitor(t);
+    }
 
-    public void visit(Tree<T> t) {
-        visits.Add(t.Value);
-        visitor(t);
+    IEnumerable<Tree<T>> Children(Tree<T> t) {
+        if (t.Left != null)
+            yield return t.Left;
+        if (t.Right != null)
+            yield return t.Right;
+        yield break; 
     }
 
     void traverse(Tree<T> t) {
-        if (t==null)
-            return;
-        visit(t);
-        traverse(t.Left);
-        traverse(t.Right);
+        var level = 0;
+        t.Level = level;
+        s.Push(t);
+        while (s.Count > 0) {
+            var p = s.Pop();
+            level = p.Level;
+            if (!visit(p))
+                break;
+            level++;
+            foreach (var c in Children(p)) {
+                c.Level = level;
+                s.Push(c);
+            }
+        }
     }
 
     public void Traverse() {

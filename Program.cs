@@ -33,8 +33,12 @@ class Monkey : Animal, ICovariant<Monkey>, IContravariant<Monkey> {
 
 class Program
 {   
+
     static void Main(string[] args)
     {
+        // TestSumOfSubSets();
+        // TestMaxSumPath();
+        // TestNQueens();
         TestTreeDfs();
         TestTreeBfsChildren();
         // CovarianceExample();
@@ -82,6 +86,169 @@ class Program
         // TestPermsOfR();
         // TestNChooseR();
         // MissingItems();
+        // TestRBacktrack();
+        // TestPermPaths();
+
+    }
+
+    private static void TestMaxSumPath()
+    {
+        // See my Gist: https://gist.githubusercontent.com/oshea00/7487f41c49aaf1fd133c92861c4fa352/raw/6efd660446d139895c7aac94b2504493e2c0a3e1/maxpathsums.py
+
+        // 1. What are the sub-problems?
+        //    - The largest path sums for each parent row's children
+        //    -
+        // 2. What are the problem variables/decisions - what changes?
+        //    - current row level
+        //
+        // 3. Is there a recurrence relationship?
+        //    largestSum = max(largestSums(rowlevel))
+        //    
+        //    - largestSums(level) = 
+        //          foreach child of row[level] node
+        //             node.sum = max(node.child1.sum , node.child2.sum) 
+        //      largest sum is the largest sum of the children
+        //      
+        // 4. What are the base/smallest cases we can decide on?
+        //    - parent with no children -> answer is parent
+        //    - no nodes - answer is zero
+        // 5. Memoization
+        // 6. Analyses
+        //
+        //...                        0
+        //     1                   3[3*]
+        //                           3
+        //     2            7[10*]         4[7*]
+        //                    3            3
+        //                    7            4
+        //     3       2[12*]    4[14*,11]     6[13*]   
+        //                3         3   3         3
+        //                7         7   4         4
+        //                2         4   4         6
+        //     4   18[30*] 5[17,19*,16] 9[22,20,23*]  3[16*]
+        //             3     3   3  3     3  3  3      3 
+        //             7     7   7  4     4  4  7      4
+        //             2     2   4  4     6  4  4      6
+        //             8     5   5  5     9  9  9      3
+        //            20    17  19 16    22 20 23     16
+        //
+        //       1. child adds largest of two parent path sums to itself
+        //       2. on the last row - choose the largest sum.
+        //       3. The path to the larget sum is the largest child sum
+        //          
+        // 75
+        // 95 64
+        // 17 47 82
+        // 18 35 87 10
+        // 20 04 82 47 65
+        // 19 01 23 75 03 34
+        // 88 02 77 73 07 63 67
+        // 99 65 04 28 06 16 70 92
+        // 41 41 26 56 83 40 80 70 33
+        // 41 48 72 33 47 32 37 16 94 29
+        // 53 71 44 65 25 43 91 52 97 51 14
+        // 70 11 33 28 77 73 17 78 39 68 17 57
+        // 91 71 52 38 17 14 91 43 58 50 27 29 48
+        // 63 66 04 68 89 53 67 30 73 16 69 87 40 31
+        // 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
+        // Answer: 1074
+
+    }
+
+    public class SumOfSubSets {
+        int M;
+        int n;
+        int[] w;
+        int[] x;
+        List<List<int>> results;
+
+        public SumOfSubSets(int M, int[] w) {
+            this.M = M;
+            this.n = w.Length;
+            x = new int[n+1];
+            this.w = new int[n+1];
+            for (int i=1;i<=n;i++)
+                this.w[i]=w[i-1];
+            results = new List<List<int>>();
+        }
+
+        void StoreResult(int k) {
+            // stash result
+            var r = new List<int>();
+            for (int i=1;i<=k;i++) {
+                if (x[i]==1)
+                    r.Add(w[i]);
+            }
+            results.Add(r);
+        }
+
+        public List<List<int>> Find() {
+            int sum = 0;
+            foreach (int n in w)
+                sum = sum + n;
+            SumOfSubsetsR(0,1,sum);
+            return results;
+        }
+
+        private void SumOfSubsetsR(int s, int k, int r) {
+            x[k] = 1;
+            if (s + w[k] == M) { // subset found
+                StoreResult(k); // store solution
+            } 
+            else {
+                if (k<n) {
+                    if (s + w[k] + w[k + 1] <= M)
+                        SumOfSubsetsR(s + w[k], k + 1, r - w[k]);
+                }
+            }
+
+            if (k<n) {
+                if (s + r - w[k] >= M && s + w[k+1] <= M) {
+                    x[k] = 0;
+                    SumOfSubsetsR(s, k + 1, r - w[k]);
+                }
+            }
+        }
+    }
+    
+    private static void TestSumOfSubSets()
+    {
+        // We pass weights in sorted
+        $"Subsets of [5,10,12,13,15,18] Summing to 30:".Dump();
+        var s = new SumOfSubSets(30,new int[] {5,10,12,13,15,18});
+        foreach (var r in s.Find()) {
+            r.ListToString().Dump();
+        }
+        
+        $"Subsets of [5] Summing to 5:".Dump();
+        s = new SumOfSubSets(5,new int[] {5});
+        foreach (var r in s.Find()) {
+            r.ListToString().Dump();
+        }
+        
+        $"Subsets of [-5,0,1,6] Summing to 1:".Dump();
+        s = new SumOfSubSets(1,new int[] {-5,0,1,6});
+        foreach (var r in s.Find()) {
+            r.ListToString().Dump();
+        }
+
+        // odd result on this one...
+        $"Subsets of [-1,-1,-1,-1] Summing to -3:".Dump();
+        s = new SumOfSubSets(-3,new int[] {-1,-1,-1,-1});
+        foreach (var r in s.Find()) {
+            r.ListToString().Dump();
+        }
+
+        $"Subsets of [1,1,1,1] Summing to 2:".Dump();
+        s = new SumOfSubSets(2,new int[] {1,1,1,1});
+        foreach (var r in s.Find()) {
+            r.ListToString().Dump();
+        }
+    }
+
+    private static void TestNQueens()
+    {
+        NQueens(6);  // general backtracking pattern
     }
 
     private static void TestTreeDfs()
@@ -96,12 +263,16 @@ class Program
                     new Tree<int>(7))
                 );
 
-        var traversal = new TreeDfs<int>(tree,t=>{
-            $"Visiting {t.Value}...".Dump();
+        int evaluated=0;
+        var traversal = new TreeDfs<int>(tree,(t)=>{
+            evaluated++;
+            $"Visiting {t.Level} {t.Value}".Dump();
+            return true;
         });
-
+        $"Depth First:".Dump();
         traversal.Traverse();
-        traversal.TraceVisits.Dump<int>();
+        $"Looked at {evaluated} vertices.".Dump();
+
     }
 
     private static void TestTreeBfsChildren()
@@ -115,12 +286,17 @@ class Program
                     new Tree<int>(6),
                     new Tree<int>(7))
                 );
-        var traversal = new TreeBfsChildren<int>(tree,t=>{
-            $"Visiting {t.Value}".Dump();
-        });
 
+        int evaluated=0;
+        var traversal = new TreeBfsChildren<int>(tree,(t)=>{
+            evaluated++;
+            $"Visiting {t.Level} {t.Value}".Dump();
+            return true;
+        });
+        $"Breadth First:".Dump();
         traversal.Traverse();
-        traversal.TraceVisits.Dump<int>();
+        $"Looked at {evaluated} vertices.".Dump();
+
     }
 
     public static async Task<bool> DoItAsync() {
@@ -859,6 +1035,7 @@ class Program
             i++;
             return true;
         });
+
         AssertAreEqual(Pow(2,A.Length),i);
 
         i=0;

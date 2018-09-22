@@ -3,39 +3,45 @@ using System.Collections.Generic;
 
 public class TreeBfsChildren<T> {
     Tree<T> tree;
-    List<T> visits;
-    Action<Tree<T>> visitor;
+    Queue<Tree<T>> q;
+    Func<Tree<T>,bool> visitor;
 
-    public TreeBfsChildren(Tree<T> tree, Action<Tree<T>> visitor) {
+    public TreeBfsChildren(Tree<T> tree, Func<Tree<T>,bool> visitor) {
         this.tree = tree;
         this.visitor = visitor;
-        visits = new List<T>();
+        q = new Queue<Tree<T>>();
     }
     
-    public List<T> TraceVisits => visits;
-
-    void visit(Tree<T> t) {
-        visits.Add(t.Value);
-        visitor(t);
+    bool visit(Tree<T> t) {
+        return visitor(t);
     }
 
-    void visitChildren(Tree<T> t) {
+    IEnumerable<Tree<T>> Children(Tree<T> t) {
         if (t.Left != null)
-            visit(t.Left);
+            yield return t.Left;
         if (t.Right != null)
-            visit(t.Right);
+            yield return t.Right;
+        yield break; 
     }
 
     void traverse(Tree<T> t) {
-        if (t==null)
-            return;
-        visitChildren(t);
-        traverse(t.Left);
-        traverse(t.Right);
+        var level = 0;
+        t.Level = level;
+        q.Enqueue(t);
+        while (q.Count > 0) {
+            var p = q.Dequeue();
+            level = p.Level;
+            if (!visit(p))
+                break;
+            level++;
+            foreach (var c in Children(p)) {
+                c.Level = level;
+                q.Enqueue(c);
+            }
+        }
     }
 
     public void Traverse() {
-        visit(tree);
         traverse(tree);
     }
 

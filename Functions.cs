@@ -65,16 +65,6 @@ public static class Functions {
         }
     }
 
-    public static T[] Insert<T>(this T[] me, T item, int pos) {
-        int n = me.Length;
-        Array.Resize(ref me,n+1);
-        for (int i=n; i>pos; i--) {
-            me[i]=me[i-1];
-        }
-        me[pos]=item;
-        return me;
-    }
-
     public static void CopyTo<T>(this T[] a,T [] b) {
         for (int i=0;i<a.Length;i++)
         {
@@ -82,25 +72,63 @@ public static class Functions {
         }
     }
 
+    // From a list of integers choose 3 which result
+    // in the largest product.
     public static int MaxProduct3(int[] A) {
-        //A.Shuffle();
-        Array.Sort(A);
+        //A.Shuffle(); // In case we're using a stupid sort
+        Array.Sort(A); // standard sort is pretty smart anyway...
         var N = A.Length;
 
-        // only 3 or all nonpos xxx nnn
-        if (N==3 || A[N-1] <=0)
-            return A[N-3]*A[N-2]*A[N-1];
+        // So we have the largest three positive numbers at the end eh????
+        // what if we have negative numbers? ooops.
+
+        // only 3 or all neg <= 0 xxx or nnn
+        if (N==3 || A[N-1] <= 0 ) // 
+            return A[N-3]*A[N-2]*A[N-1]; 
 
         // ppp or nnp ?
-        if ((A[0] < 0 && A[1] < 0) && (A[0]*A[1]*A[N-1] > A[N-1]*A[N-2]*A[N-3])) {
-                // nnp
-                return A[0]*A[1]*A[N-1];
+        if ((A[0] < 0 && A[1] < 0)  // we have to negs to check 
+             && (A[0]*A[1]*A[N-1] > A[N-1]*A[N-2]*A[N-3])) { // which is largest product?
+            // nnp
+            return A[0]*A[1]*A[N-1];
         }
 
         // ppp
         return A[N-3]*A[N-2]*A[N-1];
     }
 
+    public static void NQueens(int n) {
+        int [] position = new int[n+1]; // Setup board of n col/rows
+        int queen = 1;                  // Choose 1st queen
+        position[queen] = 0;            // start off board
+
+        var cannotPlace = new Func<int,bool>((q)=>{
+            for (int i=1;i<queen;i++) {           // for previously placed queens
+                if (position[i]==position[q] ||   // same column as current queen?
+                    Abs(i-q)==Abs(position[i]-position[q])) // same diagonal?
+                    return true;  // cannot place
+            }
+            return false; // clear to place
+        });
+
+        while (queen > 0) { // while still have queens to place
+            position[queen]++; // move current queen right 1 column
+            while (position[queen] <= n && cannotPlace(queen)) { // while still on board and cannot place
+                position[queen]++; // place queen on next column
+            }
+            // queen is placed or off the board
+            if (position[queen] <= n) {  // if on board
+                if (queen == n) { // if last queen on last row was placed
+                    position.Dump<int>(); // we have an answer...
+                } else {
+                    queen++;;  // choose next queen to place
+                    position[queen] = 0;
+                }
+            } else { // queen could not be placed
+                queen--; // go back to previously placed queen
+            }
+        }
+    }
 
     // Given 2 Arrays representing a list of binary choices (A or B),
     // call given function with each possible choice combination until
