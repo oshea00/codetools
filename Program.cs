@@ -36,11 +36,12 @@ class Program
 
     static void Main(string[] args)
     {
+        TestGetNestedItem();
         // TestSumOfSubSets();
         // TestMaxSumPath();
         // TestNQueens();
-        TestTreeDfs();
-        TestTreeBfsChildren();
+        // TestTreeDfs();
+        // TestTreeBfsChildren();
         // CovarianceExample();
         // TestEncoder();
         // TestLinked();
@@ -89,6 +90,17 @@ class Program
         // TestRBacktrack();
         // TestPermPaths();
 
+    }
+
+    private static void TestGetNestedItem()
+    {
+        var a = new object[] {"1","2","3",new[]{"4","5"},"6",new[]{"7","8"},"9"};
+        var t = getNestedItem(a,3,0,null);
+        AssertAreEqual(t.Item2,"4");
+        t = getNestedItem(a,2,0,null);
+        AssertAreEqual(t.Item2,"3");
+        t = getNestedItem(a,7,0,null);
+        AssertAreEqual(t.Item2,"8");
     }
 
     private static void TestMaxSumPath()

@@ -65,6 +65,26 @@ public static class Functions {
         }
     }
 
+    public static Tuple<int,string> getNestedItem(object[] a,int n, int i, string item) {
+    foreach (var v in a) {
+        if (item!=null)
+            break;
+        if (v is string[]) {
+            var t = getNestedItem((object []) v, n, i, item);
+            i = t.Item1;
+            item = t.Item2;
+        } else if (v is string) {
+            if (n==i) {
+                item = (string) v;
+            } 
+            i+=1;
+        }
+    }
+    return new Tuple<int,string>(i,item);
+}
+
+
+
     public static void CopyTo<T>(this T[] a,T [] b) {
         for (int i=0;i<a.Length;i++)
         {
