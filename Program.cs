@@ -36,7 +36,7 @@ class Program
 
     static void Main(string[] args)
     {
-        TestGetNestedItem();
+        // TestGetNestedItem();
         // TestSumOfSubSets();
         // TestMaxSumPath();
         // TestNQueens();
@@ -89,6 +89,10 @@ class Program
         // MissingItems();
         // TestRBacktrack();
         // TestPermPaths();
+        var d = new DefaultDictionary<string, List<int>>(() => new List<int>());
+
+        var list = d["NewList"];
+        Console.WriteLine(list.Count());
 
     }
 
