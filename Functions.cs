@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using static System.Math;
 
@@ -139,7 +140,7 @@ public static class Functions {
             // queen is placed or off the board
             if (position[queen] <= n) {  // if on board
                 if (queen == n) { // if last queen on last row was placed
-                    position.Dump<int>(); // we have an answer...
+                    position.Dump(); // we have an answer...
                 } else {
                     queen++;;  // choose next queen to place
                     position[queen] = 0;
@@ -492,58 +493,35 @@ public static class Functions {
         b = tmp;
     }
 
-    public static void Dump<T>(this T item) {
+    public static void Dump(this string item) {
         Console.WriteLine(item.ToString());
     }
 
-    public static void Dump<T>(this IList<T> A)
-    {
-        if (A.Count == 0)
-        {
-            Console.WriteLine("[]");
-            return;
-        }
-        var sb = new StringBuilder();
-        sb.Append("[");
-        foreach(var a in A)
-        {
-            sb.Append($"{a},");
-        }
-        sb.Remove(sb.Length-1,1);
-        sb.Append("]");
-        Console.WriteLine(sb.ToString());
+    public static void Dump(this bool item) {
+        Console.WriteLine(item.ToString());
     }
 
-    public static string ListToString<T>(this List<T> list) {
-        var sb = new StringBuilder();
-        sb.Append("[");
-        foreach (var l in list) {
-            sb.Append($"{l.ToString()},");
-        }
-        sb.Remove(sb.Length-1,1);
-        sb.Append("]");
-        return sb.ToString();
+    public static void Dump(this int item) {
+        Console.WriteLine(item.ToString());
     }
 
-    public static string ListJoin<T>(this T[] list) {
-        return "["+String.Join(",",list)+"]";
+    public static void Dump(this double item) {
+        Console.WriteLine(item.ToString());
     }
 
-    public static string ListJoin<T>(this List<T> list) {
-        return "["+String.Join(",",list)+"]";
+    public static void Dump(this long item) {
+        Console.WriteLine(item.ToString());
+    }
+
+    public static void Dump<T>(this IEnumerable<T> A) {
+        var items = string.Join(",",A);
+        System.Console.WriteLine($"[{items}]");
+    }
+
+    public static string ListToString<T>(this IEnumerable<T> list) {
+        return $"[{string.Join(",",list)}]";
     }
     
-    public static string ListToString<T>(this T[] list) {
-        var sb = new StringBuilder();
-        sb.Append("[");
-        foreach (var l in list) {
-            sb.Append($"{l.ToString()},");
-        }
-        sb.Remove(sb.Length-1,1);
-        sb.Append("]");
-        return sb.ToString();
-    }
-
     public static string TreeInOrderToString(this Tree<string> t) {
         var visits = new List<string>();
         var s = new Stack<Tree<string>>();
@@ -663,6 +641,7 @@ public static class Functions {
         }
         return t;
     }
+    
     public static void Huffman(int[] w) {
         // # A[m..2m-1] original weights as external node weights
         // # A[i] weight of node internal node i
@@ -713,9 +692,9 @@ public static class Functions {
             }
         }
             
-        A.ListToString<int>().Dump();
-        L.ListToString<int>().Dump();
-        R.ListToString<int>().Dump();
+        A.Dump();
+        L.Dump();
+        R.Dump();
     }
 
 }

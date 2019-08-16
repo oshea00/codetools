@@ -48,7 +48,7 @@ class Program
         // TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
-        // TestFindConnectedComponents();
+        TestFindConnectedComponents();
         // TestBFSPaths();
         // TestPaths();
         // TestGetConnectedDFS();
@@ -62,7 +62,7 @@ class Program
         // TestThreadedInOrderSuccessor();
         // TreeTraversalStackIter();
         // TreeTraversalsRecurse();
-        // TestCircularLists();
+        TestCircularLists();
         // TestDeque();
         // RunTopologicalSort();
         // TestGcd();
@@ -89,10 +89,10 @@ class Program
         // MissingItems();
         // TestRBacktrack();
         // TestPermPaths();
-        var d = new DefaultDictionary<string, List<int>>(() => new List<int>());
+        // var d = new DefaultDictionary<string, List<int>>(() => new List<int>());
 
-        var list = d["NewList"];
-        Console.WriteLine(list.Count());
+        // var list = d["NewList"];
+        // Console.WriteLine(list.Count());
 
     }
 
@@ -349,7 +349,7 @@ class Program
     {
         var encoder = new PhoneEncoder(new List<string>{"cat","bat","dog","ca","food","go"});
         var words = encoder.Encode("228");
-        words.ListJoin().Dump();
+        words.ListToString().Dump();
     }
 
     private static void TestLinked()
@@ -428,12 +428,13 @@ class Program
         var g = new Graph<int>(new List<int>
         {0,5, 4,3, 0,1, 9,12, 6,4, 5,4, 0,2, 11,12, 9,10, 0,6,
          7,8, 9,11, 5,3});
+         g.ToString().Dump();
          g.FindComponents();
          var comps = g.GetComponentIds();
          $"Components {comps.Count} :".Dump();
-         comps.ForEach(c=>{
-             g.GetVerticesInComponent(c).ListToString().Dump();
-         });
+         comps.ForEach((Action<int>)(c=>{
+             Functions.ListToString<int>(g.GetVerticesInComponent((int)c)).Dump();
+         }));
          AssertAreEqual(g.IsConnected(0,3),g.SameComponent(0,3));
     }
 
@@ -491,7 +492,7 @@ class Program
         AssertAreEqual(9,uf.FindComponent(9));
         for (int i=0;i<pairs.Length-1;i+=2) {
             uf.Union(pairs[i],pairs[i+1]);
-            uf.Dump();
+            uf.ComponentIds.Dump();
         }
         AssertAreEqual(2,uf.ComponentCount);
 
@@ -617,7 +618,7 @@ class Program
         var a = "MERGESORTEXAMPLE".ToCharArray();
         s.Sort(a);
         AssertAreEqual(new List<char>("AEEEEGLMMOPRRSTX".ToCharArray()),a);
-        a.Dump<char>();
+        a.Dump();
     }
 
     private static void TestMergeSort()
@@ -626,7 +627,7 @@ class Program
         var a = "MERGESORTEXAMPLE".ToCharArray();
         s.Sort(a);
         AssertAreEqual(new List<char>("AEEEEGLMMOPRRSTX".ToCharArray()),a);
-        a.Dump<char>();
+        a.Dump();
     }
 
     private static void TestTreeTraversalThreaded()
@@ -666,13 +667,13 @@ class Program
         var result = inOrder(a);
         $"In-Order Threaded:".Dump();
         AssertAreEqual(new string[] {"C","B","A"},result);
-        result.Dump<string>();
+        result.Dump();
         result = inOrder(b);
         AssertAreEqual(new string[] {"A","C","B"},result);
-        result.Dump<string>();
+        result.Dump();
         result = inOrder(c);
         AssertAreEqual(new string[] {"B","A","C"},result);
-        result.Dump<string>();
+        result.Dump();
     }
 
     private static void TestThreadedInOrderSuccessor()
@@ -757,7 +758,7 @@ class Program
             }
         }
         "Iter In-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
         visits.Clear();
 
         // Pre-order  v l r "Visit Then Left"
@@ -780,7 +781,7 @@ class Program
             }
         }
         "Iter Pre-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
         visits.Clear();
 
         // post-order  l r v "Visit If Right Visited"
@@ -811,7 +812,7 @@ class Program
             }
         }
         "Iter Post-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
     }
 
     private static void TreeTraversalsRecurse()
@@ -834,7 +835,7 @@ class Program
         });
         inOrder(tree);
         "In-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
         visits.Clear();
 
         Action<Tree<string>> preOrder = null;
@@ -846,7 +847,7 @@ class Program
         });
         preOrder(tree);
         "Pre-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
         visits.Clear();
 
         Action<Tree<string>> postOrder = null;
@@ -858,7 +859,7 @@ class Program
         });
         postOrder(tree);
         "Post-Order:".Dump();
-        visits.Dump<string>();
+        visits.Dump();
 
     }
 
@@ -975,7 +976,7 @@ class Program
         // Jobs are run as soon as all their dependencies (if any)
         // are satisfied.
         $"Jobs run in order:".Dump();
-        jobRuns.Dump<string>();
+        jobRuns.Dump();
         $"Jobs not run due to cyclic dependency:".Dump();
         foreach (var job in d.Keys.Where(job=>d[job].Done==false)) {
             d[job].Name.Dump();
@@ -1005,7 +1006,7 @@ class Program
     private static void TestPermutations()
     {
         Permutations("CATS".ToArray(),p=>{
-            p.Dump<char>();
+            p.Dump();
         });
     }
 
@@ -1036,7 +1037,7 @@ class Program
                 return true;
         });
 
-        minSequence.Dump<int>();
+        minSequence.Dump();
         minMissing.Dump();
     }
 
@@ -1047,7 +1048,7 @@ class Program
         int i=0;
 
         TraverseChoices(A,B,(C)=>{
-            C.Dump<int>();
+            C.Dump();
             i++;
             return true;
         });
@@ -1075,7 +1076,7 @@ class Program
     static void AvgTable(int[] A)
     {
         var sums = PrefixSums(A);
-        sums.Dump<long>();
+        sums.Dump();
         int N = A.Length;
         double minAvg = double.MaxValue;
         int minPos = N-1;
@@ -1185,7 +1186,7 @@ class Program
         var P = new int[] {2,5,0};
         var Q = new int[] {4,5,6}; 
         var a = minImpact(code,P,Q);
-        a.Dump<int>();
+        a.Dump();
         AssertAreEqual(new List<int>{2,4,1},a);
     }
 
@@ -1276,7 +1277,7 @@ class Program
         var maxX = 0;
         var maxY = 0;
         long maxSum = 0;
-        A.Dump<int>();
+        A.Dump();
         $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
         var n = A.Length;
         int k = (startPos < n/2+1) ? startPos : n - 1 - startPos;
@@ -1314,7 +1315,7 @@ class Program
         h.Push("Z");
         while (!h.IsEmpty)
         {
-            h.Items.Dump<string>();
+            h.Items.Dump();
             h.Pop().Dump();
         }
 
@@ -1326,7 +1327,7 @@ class Program
 
         while (!n.IsEmpty)
         {
-            n.Items.Dump<int>();
+            n.Items.Dump();
             n.Pop().Dump();
         }
     }
@@ -1334,9 +1335,9 @@ class Program
     private static void TestPrefixSums() {
         var A = LinearSequence(10);
         A.Shuffle();
-        A.Dump<int>();
+        A.Dump();
         var sums = PrefixSums(A);
-        sums.Dump<long>();
+        sums.Dump();
         var A0_9 = sums[10]-sums[0];
         $"Total A[0..9] = {A0_9}".Dump();
         AssertAreEqual(55,A0_9);
@@ -1356,7 +1357,7 @@ class Program
         var stopWatch = new Stopwatch();
         var seq = LinearSequence(10);
         seq.Shuffle();
-        seq.Dump<int>();
+        seq.Dump();
         stopWatch.Start();
         var canCross = WhenAllFound1ThruX(seq,5);
         stopWatch.Stop();
@@ -1393,7 +1394,7 @@ class Program
         "Low Sum:".Dump();
         //var minPath =  BuildTree(A,B);
         var minPath = MinSum(A,B);
-        minPath.Dump<int>();
+        minPath.Dump();
         minPath.Sum().Dump();
         stopWatch.Stop();
         Console.WriteLine($"Elapsed {stopWatch.ElapsedMilliseconds} milliseconds.");
@@ -1441,7 +1442,7 @@ class Program
             var s = new SortedSet<int>(); // forcing dll load to make output nicer later.
             "Test functions...".Dump();
             var A = new int[] {1,2,-9,5};
-            A.Dump<int>();
+            A.Dump();
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             var answer = FindPositiveMissingSequenceItem(A);

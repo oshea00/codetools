@@ -42,9 +42,5 @@ public class UnionFind {
     }
 
     public int ComponentCount => componentCount;
-
-    public override string ToString() {
-        return componentIds.ListToString();
-    }
-
+    public int[] ComponentIds => componentIds;
 }
