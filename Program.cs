@@ -1269,17 +1269,17 @@ class Program
 
     static void RunMushroomChamp() {
         var A = new int[] {2, 3, 7, 5, 1, 3, 9};
-        AssertAreEqual(MushroomChamp(trail:A, maxmoves:6, startPos:4), 25);
-        AssertAreEqual(MushroomChamp(trail:A, maxmoves:15, startPos:4), 30);
-        AssertAreEqual(MushroomChamp(trail:A, maxmoves:1, startPos:4), 6);
-        AssertAreEqual(MushroomChamp(trail:A, maxmoves:4, startPos:0), 18);
-        AssertAreEqual(MushroomChamp(trail:A, maxmoves:3, startPos:6), 18);
-        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 0), 2);
-        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos:-1), 2);
-        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 7), 0);
-        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 0), 0);
-        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 1), 2);
-        AssertAreEqual(MushroomChamp(trail: new int[0], maxmoves:1, startPos:0), 0);
+        AssertAreEqual(25, MushroomChamp(trail:A, maxmoves:6, startPos:4));
+        AssertAreEqual(30, MushroomChamp(trail:A, maxmoves:15, startPos:4));
+        AssertAreEqual(6,  MushroomChamp(trail:A, maxmoves:1, startPos:4));
+        AssertAreEqual(18, MushroomChamp(trail:A, maxmoves:4, startPos:0));
+        AssertAreEqual(18, MushroomChamp(trail:A, maxmoves:3, startPos:6));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 0));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos:-1));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 1));
+        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 7));
+        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 0));
+        AssertAreEqual(0,  MushroomChamp(trail: new int[0], maxmoves:1, startPos:0));
     }
 
     static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
