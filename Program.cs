@@ -48,7 +48,7 @@ class Program
         // TestMovies();
         // TestIsBipartite();
         // TestHasCycle();
-        TestFindConnectedComponents();
+        // TestFindConnectedComponents();
         // TestBFSPaths();
         // TestPaths();
         // TestGetConnectedDFS();
@@ -62,7 +62,7 @@ class Program
         // TestThreadedInOrderSuccessor();
         // TreeTraversalStackIter();
         // TreeTraversalsRecurse();
-        TestCircularLists();
+        // TestCircularLists();
         // TestDeque();
         // RunTopologicalSort();
         // TestGcd();
@@ -75,7 +75,7 @@ class Program
         // TestHowManyDivisible();   
         // TestFindMinImpact();
         // TestCountTransitions();
-        // RunMushroomChamp();
+        RunMushroomChamp();
         // TestMinHeap();
         // TestPrefixSums();
         // TestUpdateCounters();            
@@ -1269,42 +1269,53 @@ class Program
 
     static void RunMushroomChamp() {
         var A = new int[] {2, 3, 7, 5, 1, 3, 9};
-        MushroomChamp(A,6,4);
+        AssertAreEqual(MushroomChamp(trail:A, maxmoves:6, startPos:4), 25);
+        AssertAreEqual(MushroomChamp(trail:A, maxmoves:15, startPos:4), 30);
+        AssertAreEqual(MushroomChamp(trail:A, maxmoves:1, startPos:4), 6);
+        AssertAreEqual(MushroomChamp(trail:A, maxmoves:4, startPos:0), 18);
+        AssertAreEqual(MushroomChamp(trail:A, maxmoves:3, startPos:6), 18);
+        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 0), 2);
+        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos:-1), 2);
+        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 7), 0);
+        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 0), 0);
+        AssertAreEqual(MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 1), 2);
+        AssertAreEqual(MushroomChamp(trail: new int[0], maxmoves:1, startPos:0), 0);
     }
 
-    static void MushroomChamp(int[] A, int maxmoves, int startPos) {
-        var sums = PrefixSums(A);
-        var maxX = 0;
-        var maxY = 0;
-        long maxSum = 0;
-        A.Dump();
+    static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
+        trail.Dump();
         $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
-        var n = A.Length;
-        int k = (startPos < n/2+1) ? startPos : n - 1 - startPos;
-        for (int i=0; i < maxmoves && k - i >= 0; i++) {
-            int x=0, y=0;
-            if (i==0) {
-                if (startPos < n/2+1) 
-                {    x = k;     y = Min(k + (maxmoves-1),n-1); }
-                else
-                {    x = Max(n-1-k - (maxmoves-1),0);   y = n-1-k; }
-            } else {
-                if (startPos < n/2+1)
-                {    x = k - i; y = Min(k + maxmoves-2*i ,n-1); }
-                else
-                {    x = Max(n-1-k - (maxmoves-2*i),0); y = n-1-k + i; }
+        var sums = PrefixSums(trail);
+        int n = trail.Length;
+        int altSideSteps = ((maxmoves + 1) / 2) - 1;
+        int maxLeftPos = 0, maxRightPos = 0;
+        long maxSum = 0;
+
+        while (altSideSteps >= 0 && maxmoves > 0) {
+            int currLeft = 0, currRight = 0;
+            for (int sides = 0; sides < 2; sides++) {
+                if (sides % 2 == 0) {
+                    currLeft = Max(startPos - altSideSteps, 0);
+                    currRight = Min(startPos + (maxmoves - altSideSteps * 2), n - 1);
+                } else {
+                    currLeft = Max(startPos - (maxmoves - altSideSteps * 2), 0);
+                    currRight = Min(startPos + altSideSteps, n - 1);
+                }
+                var sum = sums[currRight + 1] - sums[currLeft];
+                if (sum > maxSum) {
+                    maxLeftPos = currLeft;
+                    maxRightPos = currRight;
+                    maxSum = sum;
+                }
             }
-            var sum = sums[y+1] - sums[x];
-            if (sum > maxSum) {
-                maxX = x;
-                maxY = y;
-                maxSum = sum;
-            }
-            //$"leftmost={x} rightmost={y}".Dump();
-            //$"sum={sum}".Dump();
+            altSideSteps -= 1;
         }
-        $"Best picking range[{maxX}..{maxY}] yields {maxSum}".Dump();
+        
+        $"Best picking range[{maxLeftPos}..{maxRightPos}] yields {maxSum}".Dump();
+        return maxSum;
     }
+
+
 
     private static void TestMinHeap()
     {
