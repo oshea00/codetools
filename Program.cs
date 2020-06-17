@@ -1285,38 +1285,51 @@ class Program
 
     }
 
+    static int maxLeftPos = 0;
+    static int maxRightPos = 0;
+    static long maxSum = 0;
+
     static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
+        if (maxmoves <= 0) return 0;
+        maxLeftPos = maxRightPos = 0;
+        maxSum = 0;
+
         trail.Dump();
         $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
-        var sums = PrefixSums(trail);
-        int n = trail.Length;
-        int altSideSteps = ((maxmoves + 1) / 2) - 1;
-        int maxLeftPos = 0, maxRightPos = 0;
-        long maxSum = 0;
 
-        while (altSideSteps >= 0 && maxmoves > 0) {
-            int currLeft = 0, currRight = 0;
-            for (int sides = 0; sides < 2; sides++) {
-                if (sides % 2 == 0) {
-                    currLeft = Max(startPos - altSideSteps, 0);
-                    currRight = Min(startPos + (maxmoves - altSideSteps * 2), n - 1);
-                } else {
-                    currLeft = Max(startPos - (maxmoves - altSideSteps * 2), 0);
-                    currRight = Min(startPos + altSideSteps, n - 1);
-                }
-                var sum = sums[currRight + 1] - sums[currLeft];
-                if (sum > maxSum) {
-                    maxLeftPos = currLeft;
-                    maxRightPos = currRight;
-                    maxSum = sum;
-                }
-            }
+        long[] sums = PrefixSums(trail);
+        int endIdx = trail.Length - 1;
+        int altSideSteps = ((maxmoves + 1) / 2) - 1;
+
+        while (altSideSteps >= 0) {
+            int stepBalance = (maxmoves - altSideSteps * 2);
+
+            (int left, int right) =  SetLeftAndRightBound(startPos, endIdx, altSideSteps, stepBalance);
+            UpdateMaxSum(sums,left,right);
+
+            (left, right) =  SetLeftAndRightBound(startPos, endIdx, stepBalance, altSideSteps);
+            UpdateMaxSum(sums,left,right);
+
             altSideSteps -= 1;
         }
         
         $"Best picking range[{maxLeftPos}..{maxRightPos}] yields {maxSum}".Dump();
         return maxSum;
     }
+
+    static (int left, int right) SetLeftAndRightBound(int startPos, int endIdx, int altSideSteps, int stepBalance) {
+        return (Max(startPos - altSideSteps, 0), Min(startPos + stepBalance, endIdx));
+    }
+
+    static void UpdateMaxSum(long[] sums, int currLeft, int currRight) {
+        long sum = sums[currRight + 1] - sums[currLeft];
+        if (sum > maxSum) {
+            maxLeftPos = currLeft;
+            maxRightPos = currRight;
+            maxSum = sum;
+        }
+    }
+
 
 
 
