@@ -1287,12 +1287,11 @@ class Program
 
     static int maxLeftPos = 0;
     static int maxRightPos = 0;
-    static long maxSum = 0;
 
     static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
         if (maxmoves <= 0) return 0;
         maxLeftPos = maxRightPos = 0;
-        maxSum = 0;
+        long maxSum = 0;
 
         trail.Dump();
         $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
@@ -1305,10 +1304,10 @@ class Program
             int stepBalance = (maxmoves - altSideSteps * 2);
 
             (int left, int right) =  SetLeftAndRightBound(startPos, endIdx, altSideSteps, stepBalance);
-            UpdateMaxSum(sums,left,right);
+            maxSum = MaxSum(maxSum, sums, left, right);
 
             (left, right) =  SetLeftAndRightBound(startPos, endIdx, stepBalance, altSideSteps);
-            UpdateMaxSum(sums,left,right);
+            maxSum = MaxSum(maxSum, sums, left, right);
 
             altSideSteps -= 1;
         }
@@ -1321,17 +1320,15 @@ class Program
         return (Max(startPos - altSideSteps, 0), Min(startPos + stepBalance, endIdx));
     }
 
-    static void UpdateMaxSum(long[] sums, int currLeft, int currRight) {
-        long sum = sums[currRight + 1] - sums[currLeft];
+    static long MaxSum(long maxSum, long[] sums, int left, int right) {
+        long sum = sums[right + 1] - sums[left];
         if (sum > maxSum) {
-            maxLeftPos = currLeft;
-            maxRightPos = currRight;
-            maxSum = sum;
+            maxLeftPos = left;
+            maxRightPos = right;
+            return sum;
         }
+        return maxSum;
     }
-
-
-
 
     private static void TestMinHeap()
     {
