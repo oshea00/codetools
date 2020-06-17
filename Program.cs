@@ -1280,6 +1280,9 @@ class Program
         AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 7));
         AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 0));
         AssertAreEqual(0,  MushroomChamp(trail: new int[0], maxmoves:1, startPos:0));
+        AssertAreEqual(27, MushroomChamp(trail: new int[]{3,9,1,7,5,2,3}, maxmoves:6, startPos:2));
+        AssertAreEqual(5,  MushroomChamp(trail: new int[]{2,2,1,2,2}, maxmoves:3, startPos:2));
+
     }
 
     static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
