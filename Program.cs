@@ -1269,39 +1269,39 @@ class Program
 
     static void RunMushroomChamp() {
         var A = new int[] {2, 3, 7, 5, 1, 3, 9};
-        AssertAreEqual(25, MushroomChamp(trail:A, maxmoves:6, startPos:4));
-        AssertAreEqual(30, MushroomChamp(trail:A, maxmoves:15, startPos:4));
-        AssertAreEqual(6,  MushroomChamp(trail:A, maxmoves:1, startPos:4));
-        AssertAreEqual(18, MushroomChamp(trail:A, maxmoves:4, startPos:0));
-        AssertAreEqual(18, MushroomChamp(trail:A, maxmoves:3, startPos:6));
-        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 0));
-        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos:-1));
-        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxmoves:1, startPos: 1));
-        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 7));
-        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxmoves:0, startPos: 0));
-        AssertAreEqual(0,  MushroomChamp(trail: new int[0], maxmoves:1, startPos:0));
-        AssertAreEqual(27, MushroomChamp(trail: new int[]{3,9,1,7,5,2,3}, maxmoves:6, startPos:2));
-        AssertAreEqual(5,  MushroomChamp(trail: new int[]{2,2,1,2,2}, maxmoves:3, startPos:2));
+        AssertAreEqual(25, MushroomChamp(trail:A, maxSteps:6, startPos:4));
+        AssertAreEqual(30, MushroomChamp(trail:A, maxSteps:15, startPos:4));
+        AssertAreEqual(6,  MushroomChamp(trail:A, maxSteps:1, startPos:4));
+        AssertAreEqual(18, MushroomChamp(trail:A, maxSteps:4, startPos:0));
+        AssertAreEqual(18, MushroomChamp(trail:A, maxSteps:3, startPos:6));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxSteps:1, startPos: 0));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxSteps:1, startPos:-1));
+        AssertAreEqual(2,  MushroomChamp(trail: new[]{2}, maxSteps:1, startPos: 1));
+        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxSteps:0, startPos: 7));
+        AssertAreEqual(0,  MushroomChamp(trail: new[]{2}, maxSteps:0, startPos: 0));
+        AssertAreEqual(0,  MushroomChamp(trail: new int[0], maxSteps:1, startPos:0));
+        AssertAreEqual(27, MushroomChamp(trail: new int[]{3,9,1,7,5,2,3}, maxSteps:6, startPos:2));
+        AssertAreEqual(5,  MushroomChamp(trail: new int[]{2,2,1,2,2}, maxSteps:3, startPos:2));
 
     }
 
     static int maxLeftPos = 0;
     static int maxRightPos = 0;
 
-    static long MushroomChamp(int[] trail, int maxmoves, int startPos) {
-        if (maxmoves <= 0) return 0;
+    static long MushroomChamp(int[] trail, int maxSteps, int startPos) {
+        if (maxSteps <= 0) return 0;
         maxLeftPos = maxRightPos = 0;
         long maxSum = 0;
 
         trail.Dump();
-        $"Starting pos = {startPos}, Max moves = {maxmoves}".Dump();
+        $"Starting pos = {startPos}, Max steps = {maxSteps}".Dump();
 
         long[] sums = PrefixSums(trail);
         int endIdx = trail.Length - 1;
-        int altSideSteps = ((maxmoves + 1) / 2) - 1;
+        int altSideSteps = ((maxSteps + 1) / 2) - 1;
 
         while (altSideSteps >= 0) {
-            int stepBalance = (maxmoves - altSideSteps * 2);
+            int stepBalance = (maxSteps - altSideSteps * 2);
 
             (int left, int right) =  SetLeftAndRightBound(startPos, endIdx, altSideSteps, stepBalance);
             maxSum = MaxSum(maxSum, sums, left, right);
