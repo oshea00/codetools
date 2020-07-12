@@ -75,7 +75,7 @@ class Program
         // TestHowManyDivisible();   
         // TestFindMinImpact();
         // TestCountTransitions();
-        RunMushroomChamp();
+        // RunMushroomChamp();
         // TestMinHeap();
         // TestPrefixSums();
         // TestUpdateCounters();            
@@ -89,11 +89,97 @@ class Program
         // MissingItems();
         // TestRBacktrack();
         // TestPermPaths();
+        // TestShortestPath();
+        // TestHamming();
+        TestWordChains();
+
         // var d = new DefaultDictionary<string, List<int>>(() => new List<int>());
 
         // var list = d["NewList"];
         // Console.WriteLine(list.Count());
 
+    }
+
+    private static void TestWordChains()
+    {
+        var dict = File.ReadAllLines("words.txt").Where(w=>!w.Contains("'")).ToList();
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+        var path = MakeWordChains(dict,"game","over");
+        stopWatch.Stop();
+        System.Console.WriteLine($"Time in Seconds: {stopWatch.ElapsedMilliseconds/1000.0}");
+        path.Dump();
+        AssertAreEqual(10,path.Count);
+        // Time in Seconds: 17.981
+        // "game" to "over":
+        // [game,dame,dams,dims,dies,dyes,eyes,eves,ever,over]
+        // The program '[15728] codility.dll' has exited with code 0 (0x0).
+    }
+
+    private static List<string> MakeWordChains(List<string> dictionary, string starting, string ending) 
+    {
+        var g = HammingOneGraph(dictionary,starting);
+        var bfs = new BFSPaths<string>(g,starting);
+        return bfs.PathTo(ending);
+    }
+
+    private static Graph<string> HammingOneGraph(List<string> dictionary, string starting) 
+    {
+        var marked = new Dictionary<string,bool>();
+        foreach (var w in dictionary)
+            marked.Add(w,false);
+
+        var stack = new Stack<string>();
+        stack.Push(starting);
+
+        var edgePairs = new List<string>();
+        
+        while (stack.Count > 0) {
+            var startingWord = stack.Pop();
+            marked[startingWord] = true;
+            foreach (var word in dictionary) {
+                if (IsHammingDistance(startingWord, word, 1) && !marked[word]) {
+                    edgePairs.Add(startingWord);
+                    edgePairs.Add(word);
+                    stack.Push(word);
+                }
+            }
+        }
+        (edgePairs.Count/2).Dump();
+        return new Graph<string>(edgePairs);
+    }
+
+    private static bool IsHammingDistance(string a, string b, int dist) {
+        int distance=0;
+        int n = a.Length;
+        if (a.Length != b.Length)
+            return false;
+        for (int i = 0; i < n; i++) {
+            if (a[i] != b[i])
+                distance++;
+        }
+        return distance == dist;
+    }
+
+    private static void TestHamming() {
+        AssertIsTrue(!IsHammingDistance("cat", "cats", 1));
+        AssertIsTrue(IsHammingDistance("cat", "bat", 1));
+        AssertIsTrue(IsHammingDistance("cat", "bad", 2));
+    }
+
+    private static void TestShortestPath()
+    {
+        var gs = new Graph<string>(new List<string> {
+            "cat","bat",
+            "cat","dat",
+            "cat","cad",
+            "bat","bad",
+            "dat","sat",
+            "cad","sad"
+        });
+        var bfes = new BFSPaths<string>(gs,"cat");
+        var paths = bfes.PathTo("bad");
+        paths.Dump();
     }
 
     private static void TestGetNestedItem()
